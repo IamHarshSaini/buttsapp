@@ -1,18 +1,22 @@
 import styles from "./index.module.scss";
 import { IoMdCall } from "react-icons/io";
-import { IoVideocamSharp } from "react-icons/io5";
 import { CiSearch } from "react-icons/ci";
 import { IoMdMore } from "react-icons/io";
 import { MdMessage } from "react-icons/md";
 import { MdGroups2 } from "react-icons/md";
-import { PiCardsThreeDuotone } from "react-icons/pi";
+import { CiCamera } from "react-icons/ci";
+import { GrAttachment } from "react-icons/gr";
+import { IoVideocamSharp } from "react-icons/io5";
 import { IoFilterOutline } from "react-icons/io5";
+import { PiCardsThreeDuotone } from "react-icons/pi";
+import { BsEmojiExpressionless } from "react-icons/bs";
+import { MdOutlineKeyboardVoice } from "react-icons/md";
 
-export default function Home() {
+export default function Home({ isConnected }: any) {
   return (
     <div className={styles.wrapper}>
       <Header />
-      <Layout />
+      <Layout isConnected={isConnected} />
     </div>
   );
 }
@@ -45,7 +49,8 @@ const Header = () => {
   );
 };
 
-const Layout = () => {
+const Layout = ({ isConnected }: any) => {
+
   const List: any = Array.from({ length: 4 }).map((x, i) => {
     return {
       name: "Designers Corner",
@@ -78,6 +83,7 @@ const Layout = () => {
       </li>
     );
   };
+
   return (
     <main className={styles.layout}>
       <div className={styles.left}>
@@ -94,7 +100,18 @@ const Layout = () => {
           })}
         </ul>
       </div>
-      <div className={styles.right}></div>
+      <div className={styles.right}>
+        {isConnected ? "connected" : "not"}
+        <div className={styles.messgaeBox}>
+          <BsEmojiExpressionless />
+          <GrAttachment />
+          <div className={styles.input}>
+            <CiCamera />
+            <input placeholder="Type a message" id="message" />
+          </div>
+          <MdOutlineKeyboardVoice />
+        </div>
+      </div>
     </main>
   );
 };

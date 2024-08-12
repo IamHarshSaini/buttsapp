@@ -185,11 +185,11 @@ $plcaeholderColor: #6b7c85;
             }
 
             .count {
-                color: #fff;
-                font-size: 14px;
-                padding: 3px 5px;
-                border-radius: 10px;
-                background-color: var(--primaryGreen);
+              color: #fff;
+              font-size: 14px;
+              padding: 3px 5px;
+              border-radius: 10px;
+              background-color: var(--primaryGreen);
             }
           }
         }
@@ -198,8 +198,52 @@ $plcaeholderColor: #6b7c85;
   }
 
   .right {
-    background-size: cover;
-    background-color: #efeae2;
-    background-image: url("/assets/bg/chatBg.svg");
+    position: relative;
+    // background-size: cover;
+    // background-color: #efeae2;
+    background-image: url("/assets/bg/chatBg.png");
+
+    .messgaeBox {
+      gap: 1.5rem;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      padding: $padding;
+      position: absolute;
+      background-color: #f0f2f5;
+
+      svg {
+        color: #6b7c85;
+        font-size: 1.5rem;
+      }
+
+      .input {
+        gap: 1rem;
+        flex-grow: 1;
+        display: flex;
+        padding: 0px 15px;
+        align-items: center;
+        border-radius: 10px;
+        background-color: #fff;
+
+        input {
+          border: 0;
+          width: 100%;
+          padding: 15px;
+          font-size: 1rem;
+          padding-left: 0;
+          background: none;
+
+          &:focus-visible {
+            outline: none;
+          }
+
+          &::placeholder {
+            color: #6b7c85;
+          }
+        }
+      }
+    }
   }
 }

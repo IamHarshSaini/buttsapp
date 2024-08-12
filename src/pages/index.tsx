@@ -54,10 +54,10 @@ export default function Login() {
       gradient:
         "linear-gradient( rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%)",
     },
-    {
-      color: "#e01c34",
-      gradient: "linear-gradient(#acabb0 0%, #e01c34 74%)",
-    },
+    // {
+    //   color: "#e01c34",
+    //   gradient: "linear-gradient(#acabb0 0%, #e01c34 74%)",
+    // },
     {
       color: "#e8c547",
       gradient: "linear-gradient(147deg, #c20114 0%, #e8c547 74%)",
