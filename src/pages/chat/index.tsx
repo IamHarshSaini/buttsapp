@@ -11,6 +11,7 @@ import { IoFilterOutline } from "react-icons/io5";
 import { PiCardsThreeDuotone } from "react-icons/pi";
 import { BsEmojiExpressionless } from "react-icons/bs";
 import { MdOutlineKeyboardVoice } from "react-icons/md";
+import axios from "axios";
 
 export default function Home({ isConnected }: any) {
   return (
@@ -101,7 +102,6 @@ const Layout = ({ isConnected }: any) => {
         </ul>
       </div>
       <div className={styles.right}>
-        {isConnected ? "connected" : "not"}
         <div className={styles.messgaeBox}>
           <BsEmojiExpressionless />
           <GrAttachment />
