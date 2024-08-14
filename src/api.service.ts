@@ -1,7 +1,7 @@
-import axios, { AxiosInstance, AxiosError, AxiosResponse } from "axios";
+import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/",
+  baseURL: process.env.API_URL,
 });
 
 // Add a request interceptor

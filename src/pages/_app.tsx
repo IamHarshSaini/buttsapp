@@ -4,10 +4,10 @@ import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/router";
 import type { AppProps } from "next/app";
-import { red } from "@mui/material/colors";
 import { useEffect, useState } from "react";
 import { ThemeProvider } from "@emotion/react";
 import { createTheme } from "@mui/material/styles";
+import RouterLoader from "@/components/RouterLoader";
 import { Work_Sans, Montserrat } from "next/font/google";
 
 // socket connection
@@ -27,7 +27,8 @@ export default function App({ Component, pageProps }: AppProps) {
   const [isConnected, setIsConnected] = useState<Boolean>(false);
   const [isUserLoggedIn, setIsUserLoggedIn] = useState<Boolean>(false);
 
-  function onConnect() {
+  function onConnect(e?: any) {
+    console.log(e);
     setIsConnected(true);
   }
 
@@ -55,16 +56,18 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     let { butsapp }: any = cookies.getAll();
     if (butsapp && !isUserLoggedIn) {
-      setLoading(true)
+      setLoading(true);
       setIsUserLoggedIn(true);
       setUserDetails(jwtDecode(butsapp));
       if (socket == null) {
-        socket = io("http://localhost:8080");
-        if (socket.connected) onConnect();
-        socket.on("connect", onConnect);
-        socket.on("disconnect", onDisconnect);
+        if (process.env.API_URL) {
+          socket = io(process.env.API_URL);
+          if (socket.connected) onConnect();
+          socket.on("connect", onConnect);
+          socket.on("disconnect", onDisconnect);
+        }
       }
-      setLoading(false)
+      setLoading(false);
     }
     return () => {
       if (butsapp) {
@@ -76,7 +79,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <ThemeProvider theme={theme}>
-      {loading && <h1>Loading</h1>}
+      {loading && <RouterLoader />}
       {!loading && (
         <main className={work_sans.className}>
           <Component
@@ -101,9 +104,9 @@ const theme = createTheme({
     // secondary: {
     //   main: "#19857b",
     // },
-    error: {
-      main: red.A400,
-    },
+    // error: {
+    //   main: red.A400,
+    // },
   },
   typography: {
     fontFamily: work_sans.style.fontFamily,

@@ -4,11 +4,22 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/',
-        destination: '/auth',
+        source: "/",
+        destination: "/auth",
         permanent: true,
       },
-    ]
+    ];
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
+  },
+  env: {
+    API_URL: "http://localhost:8080/",
   },
 };
 

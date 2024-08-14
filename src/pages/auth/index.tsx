@@ -47,6 +47,7 @@ export default function Login({
   user,
   setIsUserLoggedIn,
   setUserDetails,
+  children,
 }: any) {
   let activeIndex = 0;
   const router = useRouter();
@@ -176,56 +177,60 @@ export default function Login({
             ));
           })}
         </section>
-        <div className={styles.loginContainer}>
-          <div className={styles.leftSection}>
-            {isLogin && (
-              <Image src="/assets/svg/Sign.svg" alt="login" fill={true} />
-            )}
-            {!isLogin && (
-              <Image src="/assets/svg/Signup.svg" alt="login" fill={true} />
-            )}
-          </div>
-          <div className={styles.rightSection}>
-            <h2>Get's started.</h2>
-            <div className={styles.dontHaveAccount}>
-              <span>{isLogin ? "Don't" : "Already"} have an account?</span>
-              <span onClick={() => setIsLogin((prev) => !prev)}>
-                {isLogin ? "Signup" : "Signin"}
-              </span>
+        {!children ? (
+          <div className={styles.loginContainer}>
+            <div className={styles.leftSection}>
+              {isLogin && (
+                <Image src="/assets/svg/Sign.svg" alt="login" fill={true} />
+              )}
+              {!isLogin && (
+                <Image src="/assets/svg/Signup.svg" alt="login" fill={true} />
+              )}
             </div>
-            <ThemeProvider theme={customTheme(outerTheme)}>
-              <form onSubmit={handleSubmit(onSubmit)}>
-                {!isLogin && (
+            <div className={styles.rightSection}>
+              <h2>Get's started.</h2>
+              <div className={styles.dontHaveAccount}>
+                <span>{isLogin ? "Don't" : "Already"} have an account?</span>
+                <span onClick={() => setIsLogin((prev) => !prev)}>
+                  {isLogin ? "Signup" : "Signin"}
+                </span>
+              </div>
+              <ThemeProvider theme={customTheme(outerTheme)}>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  {!isLogin && (
+                    <InputField
+                      label="User Name"
+                      control={control}
+                      name="userName"
+                    />
+                  )}
                   <InputField
-                    label="User Name"
+                    label="Email Address"
                     control={control}
-                    name="userName"
+                    name="email"
                   />
-                )}
-                <InputField
-                  label="Email Address"
-                  control={control}
-                  name="email"
-                />
-                <InputField
-                  label="Password"
-                  control={control}
-                  name="password"
-                />
-                <ColorButton
-                  size="large"
-                  type="submit"
-                  loading={loading}
-                  variant="outlined"
-                  disabled={!isValid}
-                >
-                  {isLogin ? "Login" : "Create Account"}
-                </ColorButton>
-                <GetSocialIcons />
-              </form>
-            </ThemeProvider>
+                  <InputField
+                    label="Password"
+                    control={control}
+                    name="password"
+                  />
+                  <ColorButton
+                    size="large"
+                    type="submit"
+                    loading={loading}
+                    variant="outlined"
+                    disabled={!isValid}
+                  >
+                    {isLogin ? "Login" : "Create Account"}
+                  </ColorButton>
+                  <GetSocialIcons />
+                </form>
+              </ThemeProvider>
+            </div>
           </div>
-        </div>
+        ) : (
+          children
+        )}
       </div>
     );
   }
