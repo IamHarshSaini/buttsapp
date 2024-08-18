@@ -13,7 +13,7 @@ $gap: 1rem;
     position: fixed;
     flex-direction: column;
     background-color: var(--BA_BA);
-    border-right: 1px solid var(--BA_TEXT_COLOR);
+    border-right: var(--BA_BORDER);
 
     a {
       cursor: pointer;
