@@ -12,7 +12,7 @@ export function middleware(request: NextRequest) {
       if (!email) {
         return NextResponse.redirect(new URL("/auth", request.nextUrl));
       }else if(request.nextUrl.pathname == "/auth") {
-        return NextResponse.redirect(new URL("/chat", request.nextUrl));
+        return NextResponse.redirect(new URL("/buttsapp/chat", request.nextUrl));
       }
     } else if (request.nextUrl.pathname != "/auth") {
       return NextResponse.redirect(new URL("/auth", request.nextUrl));

@@ -10,6 +10,11 @@ import { createTheme } from "@mui/material/styles";
 import RouterLoader from "@/components/RouterLoader";
 import { Work_Sans, Montserrat } from "next/font/google";
 
+// toast
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ButtsappLayout from "@/components/ButtsappLayout";
+
 // socket connection
 export let socket: any = null;
 
@@ -26,6 +31,15 @@ export default function App({ Component, pageProps }: AppProps) {
   const [userDetails, setUserDetails] = useState<any>(null);
   const [isConnected, setIsConnected] = useState<Boolean>(false);
   const [isUserLoggedIn, setIsUserLoggedIn] = useState<Boolean>(false);
+
+  let props: any = {
+    ...pageProps,
+    toast: toast,
+    isConnected: isConnected,
+    userDetails: userDetails,
+    setUserDetails: setUserDetails,
+    setIsUserLoggedIn: setIsUserLoggedIn,
+  };
 
   function onConnect(e?: any) {
     console.log(e);
@@ -61,7 +75,11 @@ export default function App({ Component, pageProps }: AppProps) {
       setUserDetails(jwtDecode(butsapp));
       if (socket == null) {
         if (process.env.API_URL) {
-          socket = io(process.env.API_URL);
+          socket = io(process.env.API_URL, {
+            query: {
+              token: butsapp,
+            },
+          });
           if (socket.connected) onConnect();
           socket.on("connect", onConnect);
           socket.on("disconnect", onDisconnect);
@@ -77,20 +95,31 @@ export default function App({ Component, pageProps }: AppProps) {
     };
   }, [router]);
 
+  const GetLayout = () => {
+    let path: any = router?.asPath?.split("/")[1];
+    switch (path) {
+      case "buttsapp":
+        return (
+          <ButtsappLayout loading={loading}>
+            <Component {...props} />
+          </ButtsappLayout>
+        );
+      default:
+        return (
+          <>
+            {loading && <RouterLoader />}
+            {!loading && <Component {...props} />}
+          </>
+        );
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
-      {loading && <RouterLoader />}
-      {!loading && (
-        <main className={work_sans.className}>
-          <Component
-            {...pageProps}
-            isConnected={isConnected}
-            userDetails={userDetails}
-            setUserDetails={setUserDetails}
-            setIsUserLoggedIn={setIsUserLoggedIn}
-          />
-        </main>
-      )}
+      <main className={work_sans.className}>
+        <GetLayout />
+        <ToastContainer />
+      </main>
     </ThemeProvider>
   );
 }

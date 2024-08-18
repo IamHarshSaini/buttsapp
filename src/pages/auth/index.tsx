@@ -32,23 +32,18 @@ export const getServerSideProps = async ({ params, query }: any) => {
         throw rest;
       }
     } else {
-      throw "noooo";
+      return {
+        props: {},
+      };
     }
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
     return {
-      props: {},
+      props: { error: error?.error_description || error.error || error },
     };
   }
 };
 
-export default function Login({
-  token,
-  user,
-  setIsUserLoggedIn,
-  setUserDetails,
-  children,
-}: any) {
+export default function Login({ token, user, toast, error, children }: any) {
   let activeIndex = 0;
   const router = useRouter();
   const outerTheme = useTheme();
@@ -164,6 +159,10 @@ export default function Login({
     if (token) {
       cookies.set("butsapp", token);
       router.push("/chat");
+    }
+    console.log(error);
+    if (error) {
+      toast(error);
     }
   }, []);
 

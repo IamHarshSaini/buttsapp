@@ -1,0 +1,37 @@
+$gap: 1rem;
+
+.layout {
+  padding-left: calc(46px + $gap + $gap);
+
+  .sideNav {
+    top: 0;
+    left: 0;
+    gap: $gap;
+    padding: $gap;
+    height: 100vh;
+    display: flex;
+    position: fixed;
+    flex-direction: column;
+    background-color: var(--BA_BA);
+    border-right: 1px solid var(--BA_TEXT_COLOR);
+
+    a {
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 8px;
+
+      svg {
+        font-size: 1.6rem;
+        color: var(--BA_TEXT_COLOR);
+      }
+
+      &.active {
+        background-color: rgba(207, 213, 215, 0.3);
+      }
+
+      &:last-child {
+        margin-top: auto;
+      }
+    }
+  }
+}
