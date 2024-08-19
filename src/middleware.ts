@@ -4,7 +4,6 @@ import { jwtDecode } from "jwt-decode";
 
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
-  console.log(request.nextUrl.pathname);
   try {
     let token: any = request.cookies.get("butsapp");
     if (token?.value) {
@@ -18,7 +17,6 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/auth", request.nextUrl));
     }
   } catch (error) {
-    console.log(error);
     // return NextResponse.redirect(new URL("/auth", request.nextUrl))
   }
 }

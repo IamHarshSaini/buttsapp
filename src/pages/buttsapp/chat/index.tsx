@@ -1,53 +1,64 @@
 import Image from "next/image";
-import React, { useState } from "react";
 import { CiUser } from "react-icons/ci";
 import styles from "./index.module.scss";
 import { CiSearch } from "react-icons/ci";
 import { CiCamera } from "react-icons/ci";
 import { IoMdCall } from "react-icons/io";
 import { IoMdMore } from "react-icons/io";
+import { IoMdSend } from "react-icons/io";
 import { GrAttachment } from "react-icons/gr";
 import { PiUsersThree } from "react-icons/pi";
 import { MdPersonAddAlt } from "react-icons/md";
 import { IoFilterCircle } from "react-icons/io5";
 import { IoVideocamSharp } from "react-icons/io5";
+import React, { useEffect, useState } from "react";
 import { BsEmojiExpressionless } from "react-icons/bs";
 import { IoFilterCircleOutline } from "react-icons/io5";
 import { MdOutlineKeyboardVoice } from "react-icons/md";
+import { getAllUsers, setToken } from "@/api.service";
 
-// scoket
-import { socket } from "@/pages/_app";
+export const getServerSideProps = async ({ req }: any) => {
+  setToken(req);
+  let users = await getAllUsers();
+  return {
+    props: {
+      users,
+    },
+  };
+};
 
-function Chat() {
-  const [search, setSearch] = useState("");
-  const [users, setUsers] = useState<any>([]);
+export default function Chat({ isConnected, socket, users }: any) {
+  const [search, setSearch] = useState<any>("");
+  const [message, setMessage] = useState<any>("");
   const [showUnRead, setShowUnRead] = useState<any>(false);
+  const [chatMessgaes, setChatMessages] = useState<any>([]);
+  const [chatList, setChatList] = useState<any>(users || []);
   const [selectedChat, setSelectedChat] = useState<any>(null);
 
+  // constant
+  const userPlaceHolder = <CiUser />;
+  const groupPlaceHolder = <PiUsersThree />;
+
   const getUserList = () => {
-    let list: any = users.filter((x: any) => {
+    let list: any = chatList.filter((x: any) => {
       if (showUnRead) {
         return (
-          x.name.toLowerCase().includes(search.toLocaleLowerCase()) &&
-          x.count > 0
+          x?.userName?.toLowerCase()?.includes(search.toLocaleLowerCase()) &&
+          x?.count > 0
         );
       } else {
-        return x.name.toLowerCase().includes(search.toLocaleLowerCase());
+        return x?.userName?.toLowerCase()?.includes(search.toLocaleLowerCase());
       }
     });
     return list;
   };
 
-  const setUser = (item: any) => {
-    setSelectedChat(item);
-  };
-
   const GetChatBox = (item: any) => {
     return (
-      <li className={styles.card} onClick={() => setUser(item)}>
+      <li className={styles.card} onClick={() => handleChatClick(item)}>
         <div className={styles.avatar}>
-          {item.avatar ? (
-            <Image src={item.avatar} alt={item.name} />
+          {item?.avatar ? (
+            <Image src={item.avatar} alt={item.name} fill={true} />
           ) : item.isGroup ? (
             groupPlaceHolder
           ) : (
@@ -56,7 +67,7 @@ function Chat() {
         </div>
         <div className={styles.box}>
           <div className={styles.nameAndTime}>
-            <div className={styles.name}>{item.name}</div>
+            <div className={styles.name}>{item.userName}</div>
             <div className={styles.time}>{item.time}</div>
           </div>
           <div className={styles.lowerRow}>
@@ -70,6 +81,28 @@ function Chat() {
       </li>
     );
   };
+
+  const handleChatClick = (item: any) => {
+    setSelectedChat(item);
+  };
+
+  const handleSendMessgae = (e: any) => {
+    e.preventDefault();
+    socket.emit("sendMessage", { message, email: selectedChat.email });
+    setChatMessages((prev: any) => [...prev, { message: message, me: true }]);
+    setMessage("");
+  };
+
+  useEffect(() => {
+    if (isConnected) {
+      socket.on("message", (message: any) => {
+        setChatMessages((prev: any) => [
+          ...prev,
+          { message: message, me: false },
+        ]);
+      });
+    }
+  }, []);
 
   return (
     <div className={styles.wrapper}>
@@ -115,15 +148,16 @@ function Chat() {
             <div className={styles.userInfo}>
               <div className={styles.avatar}>
                 {selectedChat?.avatar ? (
-                  <img src={selectedChat?.avatar} alt="avatar" />
+                  <Image src={selectedChat?.avatar} alt="avatar" fill={true} />
                 ) : selectedChat.isGroup ? (
                   groupPlaceHolder
                 ) : (
                   userPlaceHolder
                 )}
               </div>
-              <div className={styles.name}>{selectedChat.name}</div>
+              <div className={styles.name}>{selectedChat.userName}</div>
             </div>
+
             <div className={styles.actions}>
               <IoMdCall />
               <IoVideocamSharp />
@@ -131,14 +165,34 @@ function Chat() {
               <IoMdMore />
             </div>
           </div>
+          <ul>
+            {chatMessgaes?.map((item: any, i: any) => (
+              <li
+                key={`messgae-${i}`}
+                className={item.me ? styles.right : styles.left}
+              >
+                <div className={styles.box}>{item.message}</div>
+              </li>
+            ))}
+          </ul>
           <div className={styles.messgaeBox}>
             <BsEmojiExpressionless />
             <GrAttachment />
-            <div className={styles.input}>
-              <CiCamera />
-              <input placeholder="Type a message" id="message" />
-            </div>
-            <MdOutlineKeyboardVoice />
+            <form onSubmit={handleSendMessgae}>
+              <div className={styles.input}>
+                <CiCamera />
+                <input
+                  value={message}
+                  placeholder="Type a message"
+                  onChange={(e: any) => setMessage(e.target.value)}
+                />
+              </div>
+              {message?.length > 0 ? (
+                <IoMdSend type="submit" />
+              ) : (
+                <MdOutlineKeyboardVoice />
+              )}
+            </form>
           </div>
         </div>
       ) : (
@@ -154,5 +208,3 @@ function Chat() {
     </div>
   );
 }
-
-export default Chat;

@@ -7,7 +7,7 @@ import { FaGithub } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { FaXTwitter } from "react-icons/fa6";
 import { styled } from "@mui/material/styles";
-import { TextField, Button, colors, Divider } from "@mui/material";
+import { TextField, Divider } from "@mui/material";
 import { outlinedInputClasses } from "@mui/material/OutlinedInput";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import LoadingButton, { LoadingButtonProps } from "@mui/lab/LoadingButton";
@@ -158,9 +158,8 @@ export default function Login({ token, user, toast, error, children }: any) {
   useEffect(() => {
     if (token) {
       cookies.set("butsapp", token);
-      router.push("/chat");
+      router.push("/buttsapp");
     }
-    console.log(error);
     if (error) {
       toast(error);
     }

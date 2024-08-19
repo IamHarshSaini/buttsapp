@@ -4,15 +4,15 @@ import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/router";
 import type { AppProps } from "next/app";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ThemeProvider } from "@emotion/react";
 import { createTheme } from "@mui/material/styles";
 import RouterLoader from "@/components/RouterLoader";
 import { Work_Sans, Montserrat } from "next/font/google";
 
 // toast
-import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
 import ButtsappLayout from "@/components/ButtsappLayout";
 
 // socket connection
@@ -35,14 +35,14 @@ export default function App({ Component, pageProps }: AppProps) {
   let props: any = {
     ...pageProps,
     toast: toast,
+    socket: socket,
     isConnected: isConnected,
     userDetails: userDetails,
     setUserDetails: setUserDetails,
     setIsUserLoggedIn: setIsUserLoggedIn,
   };
 
-  function onConnect(e?: any) {
-    console.log(e);
+  function onConnect() {
     setIsConnected(true);
   }
 
@@ -58,6 +58,26 @@ export default function App({ Component, pageProps }: AppProps) {
     setLoading(false);
   };
 
+  const GetLayout = () => {
+    let path: any = router?.asPath?.split("/")[1];
+    switch (path) {
+      case "buttsapp":
+        return (
+          <ButtsappLayout loading={loading}>
+            {loading && <RouterLoader />}
+            {!loading && <Component {...props} />}
+          </ButtsappLayout>
+        );
+      default:
+        return (
+          <>
+            {loading && <RouterLoader />}
+            {!loading && <Component {...props} />}
+          </>
+        );
+    }
+  };
+
   useEffect(() => {
     router.events.on("routeChangeStart", handleRouteChange);
     router.events.on("routeChangeComplete", handleRouteChanged);
@@ -70,7 +90,6 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     let { butsapp }: any = cookies.getAll();
     if (butsapp && !isUserLoggedIn) {
-      setLoading(true);
       setIsUserLoggedIn(true);
       setUserDetails(jwtDecode(butsapp));
       if (socket == null) {
@@ -80,39 +99,18 @@ export default function App({ Component, pageProps }: AppProps) {
               token: butsapp,
             },
           });
-          if (socket.connected) onConnect();
           socket.on("connect", onConnect);
           socket.on("disconnect", onDisconnect);
         }
       }
-      setLoading(false);
     }
     return () => {
-      if (butsapp) {
+      if (isUserLoggedIn && socket) {
         socket.off("connect", onConnect);
         socket.off("disconnect", onDisconnect);
       }
     };
-  }, [router]);
-
-  const GetLayout = () => {
-    let path: any = router?.asPath?.split("/")[1];
-    switch (path) {
-      case "buttsapp":
-        return (
-          <ButtsappLayout loading={loading}>
-            <Component {...props} />
-          </ButtsappLayout>
-        );
-      default:
-        return (
-          <>
-            {loading && <RouterLoader />}
-            {!loading && <Component {...props} />}
-          </>
-        );
-    }
-  };
+  }, []);
 
   return (
     <ThemeProvider theme={theme}>

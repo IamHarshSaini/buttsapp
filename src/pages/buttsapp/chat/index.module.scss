@@ -19,7 +19,7 @@ $plcaeholderColor: #6b7c85;
   position: relative;
   place-items: center;
 
-  &:not(img) {
+  :not(img) {
     border: 1px solid var(--BA_TEXT_COLOR);
   }
 
@@ -130,6 +130,7 @@ $plcaeholderColor: #6b7c85;
       li {
         cursor: pointer;
         list-style-type: none;
+        color: var(--BA_TEXT_COLOR);
 
         &:last-child {
           border: 0;
@@ -171,6 +172,28 @@ $plcaeholderColor: #6b7c85;
       }
     }
 
+    ul {
+      margin: 0;
+      padding: 1rem 2rem;
+      list-style-type: none;
+
+      li {
+        .box {
+          padding: 1rem;
+          border-radius: 8px;
+          margin-bottom: 1rem;
+          background-color: #fff;
+          width: max-content;
+        }
+
+        &.right {
+          .box {
+            margin-left: auto;
+          }
+        }
+      }
+    }
+
     .messgaeBox {
       gap: 1.5rem;
       bottom: 0;
@@ -182,29 +205,36 @@ $plcaeholderColor: #6b7c85;
       background-color: $BG;
       @extend .svg;
 
-      .input {
-        gap: 1rem;
-        flex-grow: 1;
+      form {
+        gap: 1.5rem;
         display: flex;
-        padding: 0px 15px;
+        flex-grow: 1;
         align-items: center;
-        border-radius: 10px;
-        background-color: #fff;
 
-        input {
-          border: 0;
-          width: 100%;
-          padding: 15px;
-          font-size: 1rem;
-          padding-left: 0;
-          background: none;
+        .input {
+          gap: 1rem;
+          flex-grow: 1;
+          display: flex;
+          padding: 0px 15px;
+          align-items: center;
+          border-radius: 10px;
+          background-color: #fff;
 
-          &:focus-visible {
-            outline: none;
-          }
+          input {
+            border: 0;
+            width: 100%;
+            padding: 15px;
+            font-size: 1rem;
+            padding-left: 0;
+            background: none;
 
-          &::placeholder {
-            color: #6b7c85;
+            &:focus-visible {
+              outline: none;
+            }
+
+            &::placeholder {
+              color: #6b7c85;
+            }
           }
         }
       }
