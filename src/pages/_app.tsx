@@ -89,7 +89,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     let { butsapp }: any = cookies.getAll();
-    if (butsapp && !isUserLoggedIn) {
+    if (butsapp && !isUserLoggedIn && typeof butsapp == "string") {
       setIsUserLoggedIn(true);
       setUserDetails(jwtDecode(butsapp));
       if (socket == null) {
@@ -103,6 +103,8 @@ export default function App({ Component, pageProps }: AppProps) {
           socket.on("disconnect", onDisconnect);
         }
       }
+    } else {
+      cookies.remove("butsapp");
     }
     return () => {
       if (isUserLoggedIn && socket) {

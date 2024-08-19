@@ -15,7 +15,7 @@ import React, { useEffect, useState } from "react";
 import { BsEmojiExpressionless } from "react-icons/bs";
 import { IoFilterCircleOutline } from "react-icons/io5";
 import { MdOutlineKeyboardVoice } from "react-icons/md";
-import { getAllUsers, setToken } from "@/api.service";
+import { getAllUsers, getChatMessage, setToken } from "@/api.service";
 
 export const getServerSideProps = async ({ req }: any) => {
   setToken(req);
@@ -27,7 +27,7 @@ export const getServerSideProps = async ({ req }: any) => {
   };
 };
 
-export default function Chat({ isConnected, socket, users }: any) {
+export default function Chat({ isConnected, socket, users, userDetails }: any) {
   const [search, setSearch] = useState<any>("");
   const [message, setMessage] = useState<any>("");
   const [showUnRead, setShowUnRead] = useState<any>(false);
@@ -58,7 +58,7 @@ export default function Chat({ isConnected, socket, users }: any) {
       <li className={styles.card} onClick={() => handleChatClick(item)}>
         <div className={styles.avatar}>
           {item?.avatar ? (
-            <Image src={item.avatar} alt={item.name} fill={true} />
+            <Image src={item.avatar} alt={item.userName} fill={true} />
           ) : item.isGroup ? (
             groupPlaceHolder
           ) : (
@@ -82,14 +82,19 @@ export default function Chat({ isConnected, socket, users }: any) {
     );
   };
 
-  const handleChatClick = (item: any) => {
+  const handleChatClick = async (item: any) => {
     setSelectedChat(item);
+    let res = await getChatMessage(userDetails._id, item._id);
+    setChatMessages(res);
   };
 
   const handleSendMessgae = (e: any) => {
     e.preventDefault();
-    socket.emit("sendMessage", { message, email: selectedChat.email });
-    setChatMessages((prev: any) => [...prev, { message: message, me: true }]);
+    socket.emit("sendMessage", { message, id: selectedChat._id });
+    setChatMessages((prev: any) => [
+      ...prev,
+      { content: message, sender: userDetails._id },
+    ]);
     setMessage("");
   };
 
@@ -98,7 +103,7 @@ export default function Chat({ isConnected, socket, users }: any) {
       socket.on("message", (message: any) => {
         setChatMessages((prev: any) => [
           ...prev,
-          { message: message, me: false },
+          { content: message, receiver: selectedChat?._id },
         ]);
       });
     }
@@ -169,9 +174,9 @@ export default function Chat({ isConnected, socket, users }: any) {
             {chatMessgaes?.map((item: any, i: any) => (
               <li
                 key={`messgae-${i}`}
-                className={item.me ? styles.right : styles.left}
+                className={item.sender == userDetails._id ? styles.right : ""}
               >
-                <div className={styles.box}>{item.message}</div>
+                <div className={styles.box}>{item.content}</div>
               </li>
             ))}
           </ul>
