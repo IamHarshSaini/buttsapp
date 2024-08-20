@@ -2,7 +2,7 @@ import React from "react";
 import Login from "@/pages/auth";
 import styles from "./index.module.scss";
 
-function RouterLoader() {
+export default function Loader() {
   return (
     <Login>
       <div
@@ -18,10 +18,18 @@ function RouterLoader() {
               <div className={styles.hamster__eye}></div>
               <div className={styles.hamster__nose}></div>
             </div>
-            <div className={`${styles.hamster__limb} ${styles.hamster__limb_fr}`}></div>
-            <div className={`${styles.hamster__limb} ${styles.hamster__limb_fl}`}></div>
-            <div className={`${styles.hamster__limb} ${styles.hamster__limb_br}`}></div>
-            <div className={`${styles.hamster__limb} ${styles.hamster__limb_bl}`}></div>
+            <div
+              className={`${styles.hamster__limb} ${styles.hamster__limb_fr}`}
+            ></div>
+            <div
+              className={`${styles.hamster__limb} ${styles.hamster__limb_fl}`}
+            ></div>
+            <div
+              className={`${styles.hamster__limb} ${styles.hamster__limb_br}`}
+            ></div>
+            <div
+              className={`${styles.hamster__limb} ${styles.hamster__limb_bl}`}
+            ></div>
             <div className={styles.hamster__tail}></div>
           </div>
         </div>
@@ -30,5 +38,3 @@ function RouterLoader() {
     </Login>
   );
 }
-
-export default RouterLoader;

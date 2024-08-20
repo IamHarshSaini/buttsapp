@@ -6,12 +6,7 @@ import { FaGoogle } from "react-icons/fa";
 import { FaGithub } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { FaXTwitter } from "react-icons/fa6";
-import { styled } from "@mui/material/styles";
-import { TextField, Divider } from "@mui/material";
-import { outlinedInputClasses } from "@mui/material/OutlinedInput";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import LoadingButton, { LoadingButtonProps } from "@mui/lab/LoadingButton";
-import { createTheme, ThemeProvider, useTheme } from "@mui/material/styles";
 
 // api
 import { getSocialurl, verifySocialAuth } from "@/api.service";
@@ -46,7 +41,6 @@ export const getServerSideProps = async ({ params, query }: any) => {
 export default function Login({ token, user, toast, error, children }: any) {
   let activeIndex = 0;
   const router = useRouter();
-  const outerTheme = useTheme();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const cookies = new Cookies(null, { path: "/" });
@@ -124,16 +118,7 @@ export default function Login({ token, user, toast, error, children }: any) {
           field: { onChange, value },
           fieldState: { error },
           formState,
-        }) => (
-          <TextField
-            value={value}
-            label={label}
-            error={!!error}
-            variant="outlined"
-            onChange={onChange}
-            helperText={error ? error.message : null}
-          />
-        )}
+        }) => <input value={value} onChange={onChange} />}
       />
     );
   };
@@ -158,7 +143,7 @@ export default function Login({ token, user, toast, error, children }: any) {
   useEffect(() => {
     if (token) {
       cookies.set("butsapp", token);
-      router.push("/buttsapp");
+      router.push("/");
     }
     if (error) {
       toast(error);
@@ -193,37 +178,29 @@ export default function Login({ token, user, toast, error, children }: any) {
                   {isLogin ? "Signup" : "Signin"}
                 </span>
               </div>
-              <ThemeProvider theme={customTheme(outerTheme)}>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                  {!isLogin && (
-                    <InputField
-                      label="User Name"
-                      control={control}
-                      name="userName"
-                    />
-                  )}
+              <form onSubmit={handleSubmit(onSubmit)}>
+                {!isLogin && (
                   <InputField
-                    label="Email Address"
+                    label="User Name"
                     control={control}
-                    name="email"
+                    name="userName"
                   />
-                  <InputField
-                    label="Password"
-                    control={control}
-                    name="password"
-                  />
-                  <ColorButton
-                    size="large"
-                    type="submit"
-                    loading={loading}
-                    variant="outlined"
-                    disabled={!isValid}
-                  >
-                    {isLogin ? "Login" : "Create Account"}
-                  </ColorButton>
-                  <GetSocialIcons />
-                </form>
-              </ThemeProvider>
+                )}
+                <InputField
+                  label="Email Address"
+                  control={control}
+                  name="email"
+                />
+                <InputField
+                  label="Password"
+                  control={control}
+                  name="password"
+                />
+                <button type="submit" disabled={!isValid}>
+                  {isLogin ? "Login" : "Create Account"}
+                </button>
+                <GetSocialIcons toast={toast} />
+              </form>
             </div>
           </div>
         ) : (
@@ -234,19 +211,19 @@ export default function Login({ token, user, toast, error, children }: any) {
   }
 }
 
-const GetSocialIcons = () => {
+const GetSocialIcons = ({ toast }: any) => {
   const socialButtonClicked = async (social: any) => {
     try {
       const { url }: any = await getSocialurl(social);
       window.open(url, "_self");
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      toast.error(error.message);
     }
   };
 
   return (
     <div className={styles.socialContainer}>
-      <Divider className={styles.divider}>Or</Divider>
+      <div className={styles.divider}>Or</div>
       <div className={styles.socialWrapper}>
         <FaGoogle onClick={() => socialButtonClicked("google")} />
         <FaGithub onClick={() => socialButtonClicked("github")} />
@@ -255,86 +232,3 @@ const GetSocialIcons = () => {
     </div>
   );
 };
-
-const ColorButton = styled(LoadingButton)<LoadingButtonProps>(({ theme }) => ({
-  color: "var(--login-color)",
-  borderColor: "var(--login-color)",
-  backgroundColor: "transparent",
-  "&:hover": {
-    color: "#fff",
-    borderColor: "var(--login-color)",
-    backgroundColor: "var(--login-color)",
-  },
-  "&:disabled": {
-    opacity: "0.5",
-    color: "var(--login-color)",
-    backgroundColor: "transparent",
-    borderColor: "var(--login-color)",
-  },
-}));
-
-const customTheme = (outerTheme: any) =>
-  createTheme({
-    palette: {
-      mode: outerTheme.palette.mode,
-    },
-    components: {
-      MuiTextField: {
-        styleOverrides: {
-          root: {
-            "--TextField-brandBorderColor": "var(--login-color)",
-            "--TextField-brandBorderHoverColor": "var(--login-color)",
-            "--TextField-brandBorderFocusedColor": "var(--login-color)",
-            "& label.Mui-focused": {
-              color: "var(--login-color)",
-            },
-          },
-        },
-      },
-      MuiOutlinedInput: {
-        styleOverrides: {
-          notchedOutline: {
-            borderColor: "var(--login-color)",
-          },
-          root: {
-            [`&:hover .${outlinedInputClasses.notchedOutline}`]: {
-              borderColor: "var(--login-color)",
-            },
-            [`&.Mui-focused .${outlinedInputClasses.notchedOutline}`]: {
-              borderColor: "var(--login-color)",
-            },
-          },
-        },
-      },
-      MuiFilledInput: {
-        styleOverrides: {
-          root: {
-            "&::before, &::after": {
-              borderBottom: "2px solid var(--login-color)",
-            },
-            "&:hover:not(.Mui-disabled, .Mui-error):before": {
-              borderBottom: "2px solid var(--login-color)",
-            },
-            "&.Mui-focused:after": {
-              borderBottom: "2px solid var(--login-color)",
-            },
-          },
-        },
-      },
-      MuiInput: {
-        styleOverrides: {
-          root: {
-            "&::before": {
-              borderBottom: "2px solid var(--login-color)",
-            },
-            "&:hover:not(.Mui-disabled, .Mui-error):before": {
-              borderBottom: "2px solid var(--login-color)",
-            },
-            "&.Mui-focused:after": {
-              borderBottom: "2px solid var(--login-color)",
-            },
-          },
-        },
-      },
-    },
-  });

@@ -142,12 +142,15 @@ $plcaeholderColor: #6b7c85;
   }
 
   .selectedChat {
+    display: flex;
+    overflow: hidden;
     position: relative;
-    // background-size: cover;
-    // background-color: #efeae2;
+    flex-direction: column;
     background-image: url("/assets/bg/chatBg.png");
 
     .selectedChatHeader {
+      top: 0;
+      position: sticky;
       padding: $padding;
       background-color: $BG;
       @extend .flex-ai-center-js-sb;
@@ -159,9 +162,20 @@ $plcaeholderColor: #6b7c85;
           @extend .avatarBox;
         }
 
-        .name {
-          color: var(--navColor);
-          font-weight: 500;
+        .about {
+          .name {
+            color: var(--navColor);
+            font-weight: 500;
+          }
+
+          .status {
+            margin-top: 4px;
+            font-size: 0.8rem;
+
+            &.online {
+              color: var(--BA_GREEN);
+            }
+          }
         }
       }
 
@@ -174,16 +188,34 @@ $plcaeholderColor: #6b7c85;
 
     ul {
       margin: 0;
-      padding: 1rem 2rem;
+      overflow-x: auto;
       list-style-type: none;
+      padding: 1rem 2rem calc(80px + 1rem) 2rem;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
 
       li {
         .box {
+          gap: 10px;
+          display: flex;
           padding: 1rem;
+          max-width: 350px;
+          line-height: 22px;
           border-radius: 8px;
-          margin-bottom: 1rem;
-          background-color: #fff;
           width: max-content;
+          margin-bottom: 1rem;
+          align-items: flex-end;
+          background-color: #fff;
+
+          span {
+            opacity: 0.6;
+            text-wrap: nowrap;
+            font-size: 0.7rem;
+            width: max-content;
+            display: inline-block;
+          }
         }
 
         &.right {

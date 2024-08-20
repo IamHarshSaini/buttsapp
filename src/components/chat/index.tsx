@@ -1,3 +1,4 @@
+import moment from "moment";
 import Image from "next/image";
 import { CiUser } from "react-icons/ci";
 import styles from "./index.module.scss";
@@ -11,28 +12,20 @@ import { PiUsersThree } from "react-icons/pi";
 import { MdPersonAddAlt } from "react-icons/md";
 import { IoFilterCircle } from "react-icons/io5";
 import { IoVideocamSharp } from "react-icons/io5";
-import React, { useEffect, useState } from "react";
 import { BsEmojiExpressionless } from "react-icons/bs";
 import { IoFilterCircleOutline } from "react-icons/io5";
 import { MdOutlineKeyboardVoice } from "react-icons/md";
-import { getAllUsers, getChatMessage, setToken } from "@/api.service";
-
-export const getServerSideProps = async ({ req }: any) => {
-  setToken(req);
-  let users = await getAllUsers();
-  return {
-    props: {
-      users,
-    },
-  };
-};
+import React, { useEffect, useRef, useState } from "react";
 
 export default function Chat({ isConnected, socket, users, userDetails }: any) {
+  const msgRef: any = useRef();
   const [search, setSearch] = useState<any>("");
   const [message, setMessage] = useState<any>("");
   const [showUnRead, setShowUnRead] = useState<any>(false);
-  const [chatMessgaes, setChatMessages] = useState<any>([]);
   const [chatList, setChatList] = useState<any>(users || []);
+
+  // selected chat states
+  const [chatMessgaes, setChatMessages] = useState<any>([]);
   const [selectedChat, setSelectedChat] = useState<any>(null);
 
   // constant
@@ -84,8 +77,11 @@ export default function Chat({ isConnected, socket, users, userDetails }: any) {
 
   const handleChatClick = async (item: any) => {
     setSelectedChat(item);
-    let res = await getChatMessage(userDetails._id, item._id);
-    setChatMessages(res);
+    socket.emit("chatMessages", item._id, (msg: any) => {
+      scrollToBottom();
+      msgRef.current.focus();
+      setChatMessages(msg.reverse());
+    });
   };
 
   const handleSendMessgae = (e: any) => {
@@ -96,17 +92,47 @@ export default function Chat({ isConnected, socket, users, userDetails }: any) {
       { content: message, sender: userDetails._id },
     ]);
     setMessage("");
+    scrollToBottom();
+  };
+
+  const scrollToBottom = () => {
+    try {
+      setTimeout(() => {
+        var headerOffset = 0;
+        var element: any = document.getElementById("lastChatMessageRef");
+        if (element) {
+          var elementPosition = element.getBoundingClientRect().top;
+          var offsetPosition =
+            elementPosition + window.pageYOffset - headerOffset;
+          let chats: any = document.getElementById("chats");
+          chats.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth",
+          });
+        }
+      }, 20);
+    } catch (error) {}
+  };
+
+  const getTime = (time: string) => {
+    return moment(time).format("hh:mm A");
   };
 
   useEffect(() => {
-    if (isConnected) {
-      socket.on("message", (message: any) => {
-        setChatMessages((prev: any) => [
-          ...prev,
-          { content: message, receiver: selectedChat?._id },
-        ]);
-      });
-    }
+    socket.on("message", (message: any) => {
+      setChatMessages((prev: any) => [
+        ...prev,
+        { content: message, receiver: selectedChat?._id },
+      ]);
+      scrollToBottom();
+    });
+    socket.emit("chatList", (arr: any) => {
+      setChatList(arr);
+    });
+    return () => {
+      socket.off("message");
+      socket.off("chatList");
+    };
   }, []);
 
   return (
@@ -160,7 +186,16 @@ export default function Chat({ isConnected, socket, users, userDetails }: any) {
                   userPlaceHolder
                 )}
               </div>
-              <div className={styles.name}>{selectedChat.userName}</div>
+              <div className={styles.about}>
+                <div className={styles.name}>{selectedChat.userName}</div>
+                {/* <div
+                  className={`${styles.status} ${
+                    isChatOnline ? styles.online : styles.offline
+                  }`}
+                >
+                  {isChatOnline ? "online" : "offline"}
+                </div> */}
+              </div>
             </div>
 
             <div className={styles.actions}>
@@ -170,16 +205,21 @@ export default function Chat({ isConnected, socket, users, userDetails }: any) {
               <IoMdMore />
             </div>
           </div>
-          <ul>
+          <ul id="chats">
             {chatMessgaes?.map((item: any, i: any) => (
               <li
                 key={`messgae-${i}`}
                 className={item.sender == userDetails._id ? styles.right : ""}
               >
-                <div className={styles.box}>{item.content}</div>
+                <div className={styles.box}>
+                  {item.content}
+                  <span>{getTime(item.createdAt)}</span>
+                </div>
               </li>
             ))}
+            <div id={"lastChatMessageRef"} />
           </ul>
+
           <div className={styles.messgaeBox}>
             <BsEmojiExpressionless />
             <GrAttachment />
@@ -187,7 +227,9 @@ export default function Chat({ isConnected, socket, users, userDetails }: any) {
               <div className={styles.input}>
                 <CiCamera />
                 <input
+                  ref={msgRef}
                   value={message}
+                  autoFocus={true}
                   placeholder="Type a message"
                   onChange={(e: any) => setMessage(e.target.value)}
                 />
