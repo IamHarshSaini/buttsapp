@@ -1,19 +1,19 @@
-$gap: 1rem;
+
 
 .layout {
-  padding-left: calc(46px + $gap + $gap);
+  padding-left: calc(46px + var(--spacing-1) + var(--spacing-1));
 
   .list {
     top: 0;
     left: 0;
-    gap: $gap;
-    padding: $gap;
+    gap: var(--spacing-1);
+    padding: var(--spacing-1);
     height: 100vh;
     display: flex;
     position: fixed;
     list-style-type: none;
     flex-direction: column;
-    border-right: var(--BA_BORDER);
+    border-right: var(--border-1);
     background-color: var(--BA_BA);
 
     & > .item {
@@ -23,7 +23,7 @@ $gap: 1rem;
 
       svg {
         font-size: 1.6rem;
-        color: var(--BA_TEXT_COLOR);
+        color: var(--text-1);
       }
 
       &.active {

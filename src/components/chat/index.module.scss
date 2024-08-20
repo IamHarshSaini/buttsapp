@@ -1,7 +1,7 @@
-$gap: 1rem;
-$BG: #f0f2f5;
+
+
 $padding: 15px 25px;
-$plcaeholderColor: #6b7c85;
+
 
 .flex-ai-center-js-sb {
   display: flex;
@@ -20,12 +20,12 @@ $plcaeholderColor: #6b7c85;
   place-items: center;
 
   :not(img) {
-    border: 1px solid var(--BA_TEXT_COLOR);
+    border: 1px solid var(--text-1);
   }
 
   svg {
     font-size: 1.4rem;
-    color: var(--BA_TEXT_COLOR);
+    color: var(--text-1);
   }
 }
 
@@ -33,7 +33,7 @@ $plcaeholderColor: #6b7c85;
   svg {
     cursor: pointer;
     font-size: 1.4rem;
-    color: var(--BA_TEXT_COLOR);
+    color: var(--text-1);
   }
 }
 
@@ -46,25 +46,25 @@ $plcaeholderColor: #6b7c85;
     overflow: auto;
 
     &:first-child {
-      border-right: var(--BA_BORDER);
+      border-right: var(--border-1);
     }
   }
 
   .chats {
     .header {
       display: flex;
-      padding: $gap;
+      padding: var(--spacing-1);
       padding-bottom: 0;
       justify-content: space-between;
       .title {
         font-size: 1.2rem;
         font-weight: 500;
-        color: var(--BA_TEXT_COLOR);
+        color: var(--text-1);
       }
       .newChatAndSort {
         gap: 1rem;
         display: flex;
-        color: $plcaeholderColor;
+        color: var(--text-1);
         svg {
           font-size: 1.5rem;
 
@@ -81,12 +81,12 @@ $plcaeholderColor: #6b7c85;
       gap: 15px;
       z-index: 1;
       display: grid;
-      padding: $gap;
+      padding: var(--spacing-1);
       position: sticky;
       align-items: center;
       background-color: #fff;
-      border-left: var(--BA_BORDER);
-      border-bottom: var(--BA_BORDER);
+      border-left: var(--border-1);
+      border-bottom: var(--border-1);
 
       .searchBox {
         position: relative;
@@ -95,11 +95,11 @@ $plcaeholderColor: #6b7c85;
           border: 0;
           width: 100%;
           border-radius: 10px;
-          background-color: #f0f2f5;
+          background-color: var(--bg-1);
           padding: 12px 20px 12px 40px;
 
           &::placeholder {
-            color: $plcaeholderColor;
+            color: var(--text-1);
           }
 
           &:focus-visible {
@@ -112,7 +112,7 @@ $plcaeholderColor: #6b7c85;
           left: 10px;
           font-size: 1.3rem;
           position: absolute;
-          color: $plcaeholderColor;
+          color: var(--text-1);
           transform: translateY(-50%);
         }
       }
@@ -130,7 +130,7 @@ $plcaeholderColor: #6b7c85;
       li {
         cursor: pointer;
         list-style-type: none;
-        color: var(--BA_TEXT_COLOR);
+        color: var(--text-1);
 
         &:last-child {
           border: 0;
@@ -152,7 +152,7 @@ $plcaeholderColor: #6b7c85;
       top: 0;
       position: sticky;
       padding: $padding;
-      background-color: $BG;
+      background-color: var(--bg-1);
       @extend .flex-ai-center-js-sb;
 
       .userInfo {
@@ -173,7 +173,7 @@ $plcaeholderColor: #6b7c85;
             font-size: 0.8rem;
 
             &.online {
-              color: var(--BA_GREEN);
+              color: var(--color-1);
             }
           }
         }
@@ -234,7 +234,7 @@ $plcaeholderColor: #6b7c85;
       align-items: center;
       padding: $padding;
       position: absolute;
-      background-color: $BG;
+      background-color: var(--bg-1);
       @extend .svg;
 
       form {
@@ -265,7 +265,7 @@ $plcaeholderColor: #6b7c85;
             }
 
             &::placeholder {
-              color: #6b7c85;
+              color: var(--text-1);;
             }
           }
         }
@@ -275,7 +275,7 @@ $plcaeholderColor: #6b7c85;
   .bg {
     display: grid;
     place-items: center;
-    background-color: var(--BA_GHOST_GREEN);
+    background-color: var(--ghost-bg-1);
     img {
       // height: 400px;
       width: 300px;
@@ -292,7 +292,7 @@ $plcaeholderColor: #6b7c85;
   padding-bottom: 13px;
   color: var(--navColor);
   grid-template-columns: 35px 1fr;
-  border-bottom: 1px solid #e9edef;
+  border-bottom: var(--text-1);;
 
   .avatar {
     @extend .avatarBox;
@@ -337,7 +337,7 @@ $plcaeholderColor: #6b7c85;
         font-size: 14px;
         padding: 3px 5px;
         border-radius: 10px;
-        background-color: var(--BA_GREEN);
+        background-color: var(--color-1);
       }
     }
   }
