@@ -1,10 +1,12 @@
-import "@/styles/globals.scss";
 import { io } from "socket.io-client";
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
 import type { AppProps } from "next/app";
 import { useEffect, useState } from "react";
 import { Work_Sans, Montserrat } from "next/font/google";
+
+// css
+import "@/styles/globals.scss";
 
 // toast
 import "react-toastify/dist/ReactToastify.css";

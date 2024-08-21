@@ -1,20 +1,18 @@
-
-
 .layout {
   padding-left: calc(46px + var(--spacing-1) + var(--spacing-1));
 
   .list {
     top: 0;
     left: 0;
-    gap: var(--spacing-1);
-    padding: var(--spacing-1);
     height: 100vh;
     display: flex;
     position: fixed;
+    gap: var(--spacing-1);
     list-style-type: none;
     flex-direction: column;
+    padding: var(--spacing-1);
     border-right: var(--border-1);
-    background-color: var(--BA_BA);
+    // background-color: var(--bg-1);
 
     & > .item {
       cursor: pointer;

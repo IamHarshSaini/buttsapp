@@ -33,7 +33,7 @@ export const getServerSideProps = async ({ params, query }: any) => {
     }
   } catch (error: any) {
     return {
-      props: { error: error?.error_description || error.error || error },
+      props: { error: error?.message || error },
     };
   }
 };
