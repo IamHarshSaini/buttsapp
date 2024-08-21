@@ -108,21 +108,6 @@ export default function Login({ token, user, toast, error, children }: any) {
     }
   };
 
-  const InputField = ({ control, label, name }: any) => {
-    return (
-      <Controller
-        name={name}
-        control={control}
-        rules={{ required: true }}
-        render={({
-          field: { onChange, value },
-          fieldState: { error },
-          formState,
-        }) => <input value={value} onChange={onChange} />}
-      />
-    );
-  };
-
   useEffect(() => {
     setRowCount(("" + window?.innerHeight)[0]);
     if (window.innerWidth < 768) {
@@ -180,21 +165,23 @@ export default function Login({ token, user, toast, error, children }: any) {
               </div>
               <form onSubmit={handleSubmit(onSubmit)}>
                 {!isLogin && (
-                  <InputField
-                    label="User Name"
-                    control={control}
-                    name="userName"
+                  <input
+                    {...register("userName", { required: true })}
+                    placeholder="User Name"
+                    required={true}
                   />
                 )}
-                <InputField
-                  label="Email Address"
-                  control={control}
-                  name="email"
+                <input
+                  {...register("email", { required: true })}
+                  placeholder="Email Address"
+                  required={true}
+                  type="email"
                 />
-                <InputField
-                  label="Password"
-                  control={control}
-                  name="password"
+                <input
+                  {...register("password", { required: true })}
+                  placeholder="Password"
+                  required={true}
+                  type="password"
                 />
                 <button type="submit" disabled={!isValid}>
                   {isLogin ? "Login" : "Create Account"}

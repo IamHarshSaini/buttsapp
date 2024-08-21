@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./index.module.scss";
 import { FaRegStar } from "react-icons/fa";
 import { PiSlideshow } from "react-icons/pi";
@@ -16,11 +16,14 @@ const Starred = dynamic(() => import("@/components/starred"), { ssr: false });
 const Archives = dynamic(() => import("@/components/archives"), { ssr: false });
 const Settings = dynamic(() => import("@/components/settings"), { ssr: false });
 
-export default function Buttsapp({ isConnected, ...props }: any) {
+export default function Buttsapp(props: any) {
+  const { isConnected, socket } = props;
+  const [allUserList, setAllUserList] = useState<any>([]);
   const [selectedModuleIndex, setSelectedModuleIndex] = useState<any>(0);
+
   const items: any = [
     {
-      comp: <Chat {...props} />,
+      comp: <Chat {...props} allUserList={allUserList} />,
       icon: <LuMessagesSquare />,
     },
     {
@@ -53,6 +56,15 @@ export default function Buttsapp({ isConnected, ...props }: any) {
       setSelectedModuleIndex(index);
     }
   };
+
+  useEffect(() => {
+    if (isConnected) {
+      socket.emit("getAllUserList", (list: any) => {
+        setAllUserList(list);
+      });
+    }
+    return () => {};
+  }, [isConnected]);
 
   return (
     <div className={styles.layout}>
