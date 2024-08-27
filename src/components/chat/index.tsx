@@ -74,27 +74,30 @@ export default function Chat({ socket, users, userDetails, allUserList }: any) {
   };
 
   const handleChatClick = async (item: any) => {
-    if (newChat) {
+    setSelectedChat(item);
+    if (item.isGroup) {
     } else {
-      console.log(item);
-      // setSelectedChat(item);
-      // socket.emit("chatMessages", item._id, (msg: any) => {
-      //   scrollToBottom();
-      //   msgRef.current.focus();
-      //   setChatMessages(msg.reverse());
-      // });
+      socket.emit("chatMessages", item._id, (msg: any) => {
+        scrollToBottom();
+        msgRef.current.focus();
+        setChatMessages(msg.reverse());
+      });
     }
   };
 
-  const handleSendMessgae = (e: any) => {
+  const handleSendMessage = (e: any) => {
     e.preventDefault();
-    socket.emit("sendMessage", { message, id: selectedChat._id });
-    setChatMessages((prev: any) => [
-      ...prev,
-      { content: message, sender: userDetails._id },
-    ]);
-    setMessage("");
-    scrollToBottom();
+    socket.emit(
+      "sendMessage",
+      message,
+      selectedChat._id,
+      "text",
+      (msg: any) => {
+        setChatMessages((prev: any) => [...prev, msg]);
+        setMessage("");
+        scrollToBottom();
+      }
+    );
   };
 
   const scrollToBottom = () => {
@@ -122,24 +125,16 @@ export default function Chat({ socket, users, userDetails, allUserList }: any) {
 
   useEffect(() => {
     socket.on("message", (message: any) => {
-      setChatMessages((prev: any) => [
-        ...prev,
-        { content: message, receiver: selectedChat?._id },
-      ]);
+      setChatMessages((prev: any) => [...prev, message]);
       scrollToBottom();
     });
-    socket.emit("chatList", (arr: any) => {
+    socket.emit("chatList",  (arr: any) => {
       setChatList(arr);
     });
     return () => {
       socket.off("message");
-      socket.off("chatList");
     };
   }, []);
-
-  useEffect(()=> {
-
-  },[])
 
   return (
     <div className={styles.wrapper}>
@@ -235,7 +230,7 @@ export default function Chat({ socket, users, userDetails, allUserList }: any) {
           <div className={styles.messgaeBox}>
             <BsEmojiExpressionless />
             <GrAttachment />
-            <form onSubmit={handleSendMessgae}>
+            <form onSubmit={handleSendMessage}>
               <div className={styles.input}>
                 <CiCamera />
                 <input
