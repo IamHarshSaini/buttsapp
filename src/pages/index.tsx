@@ -17,13 +17,12 @@ const Archives = dynamic(() => import("@/components/archives"), { ssr: false });
 const Settings = dynamic(() => import("@/components/settings"), { ssr: false });
 
 export default function Buttsapp(props: any) {
-  const { isConnected, socket } = props;
-  const [allUserList, setAllUserList] = useState<any>([]);
+  const { isConnected, socket, dispatch } = props;
   const [selectedModuleIndex, setSelectedModuleIndex] = useState<any>(0);
 
   const items: any = [
     {
-      comp: <Chat {...props} allUserList={allUserList} />,
+      comp: <Chat {...props} />,
       icon: <LuMessagesSquare />,
     },
     {
@@ -39,7 +38,7 @@ export default function Buttsapp(props: any) {
     },
     {
       comp: <Archives {...props} />,
-      icon: <IoArchiveOutline />,
+      icon: <IoArchiveOutline {...props} />,
     },
     {
       comp: <Starred {...props} />,
@@ -60,10 +59,18 @@ export default function Buttsapp(props: any) {
   useEffect(() => {
     if (isConnected) {
       socket.emit("getAllUserList", (list: any) => {
-        setAllUserList(list);
+        dispatch({ type: "ALL_USER_LIST", payload: list });
       });
+      socket.emit("chatList", (list: any) => {
+        dispatch({ type: "CHAT_LIST", payload: list });
+      });
+      // socket.on("updateChatList", (item: any) => {
+      //   dispatch({ type: "UPDATE_CHAT_LIST", payload: item });
+      // });
     }
-    return () => {};
+    return () => {
+      // socket.off("updateChatList");
+    };
   }, [isConnected]);
 
   return (
@@ -81,9 +88,7 @@ export default function Buttsapp(props: any) {
           </li>
         ))}
       </ul>
-      {isConnected &&
-        items[selectedModuleIndex].comp &&
-        items[selectedModuleIndex].comp}
+      {isConnected && items[selectedModuleIndex].comp}
     </div>
   );
 }

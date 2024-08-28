@@ -2,7 +2,8 @@ import { io } from "socket.io-client";
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
 import type { AppProps } from "next/app";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer } from "react";
+import reducer, { intialStates } from "@/reducer";
 import { Work_Sans, Montserrat } from "next/font/google";
 
 // css
@@ -23,33 +24,21 @@ const work_sans = Work_Sans({
 
 export default function App({ Component, pageProps }: AppProps) {
   const cookies = new Cookies(null, { path: "/" });
-  const [userDetails, setUserDetails] = useState<any>(null);
-  const [isConnected, setIsConnected] = useState<Boolean>(false);
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState<Boolean>(false);
-
-  let props: any = {
-    ...pageProps,
-    toast: toast,
-    socket: socket,
-    isConnected: isConnected,
-    userDetails: userDetails,
-    setUserDetails: setUserDetails,
-    setIsUserLoggedIn: setIsUserLoggedIn,
-  };
+  const [state, dispatch] = useReducer(reducer, intialStates);
 
   function onConnect() {
-    setIsConnected(true);
+    dispatch({ type: "SOCKET_CONNECTED", payload: true });
   }
 
   function onDisconnect() {
-    setIsConnected(false);
+    dispatch({ type: "SOCKET_CONNECTED", payload: false });
   }
 
   useEffect(() => {
     let { butsapp }: any = cookies.getAll();
-    if (butsapp && !isUserLoggedIn && typeof butsapp == "string") {
-      setIsUserLoggedIn(true);
-      setUserDetails(jwtDecode(butsapp));
+    if (butsapp && !state.isUserLoggedIn && typeof butsapp == "string") {
+      dispatch({ type: "IS_USER_LOGGED_IN", payload: true });
+      dispatch({ type: "USER_DETAILS", payload: jwtDecode(butsapp) });
       if (socket == null) {
         if (process.env.API_URL) {
           socket = io(process.env.API_URL, {
@@ -65,7 +54,7 @@ export default function App({ Component, pageProps }: AppProps) {
       cookies.remove("butsapp");
     }
     return () => {
-      if (isUserLoggedIn && socket) {
+      if (state.isUserLoggedIn && socket) {
         socket.off("connect", onConnect);
         socket.off("disconnect", onDisconnect);
       }
@@ -74,7 +63,12 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <main className={work_sans.className}>
-      <Component {...props} />
+      <Component
+        toast={toast}
+        socket={socket}
+        dispatch={dispatch}
+        {...{ ...state, ...pageProps }}
+      />
       <ToastContainer />
     </main>
   );

@@ -16,14 +16,21 @@ import { BsEmojiExpressionless } from "react-icons/bs";
 import { IoFilterCircleOutline } from "react-icons/io5";
 import { MdOutlineKeyboardVoice } from "react-icons/md";
 import React, { useEffect, useRef, useState } from "react";
+import { getTime } from "@/utils/constant";
 
-export default function Chat({ socket, users, userDetails, allUserList }: any) {
+export default function Chat({
+  socket,
+  chatList,
+  dispatch,
+  userDetails,
+  allUserList,
+  selectedChatId,
+}: any) {
   const msgRef: any = useRef();
   const [search, setSearch] = useState<any>("");
   const [message, setMessage] = useState<any>("");
   const [newChat, setNewChat] = useState<Boolean>(false);
   const [showUnRead, setShowUnRead] = useState<any>(false);
-  const [chatList, setChatList] = useState<any>(users || []);
 
   // selected chat states
   const [chatMessgaes, setChatMessages] = useState<any>([]);
@@ -33,71 +40,160 @@ export default function Chat({ socket, users, userDetails, allUserList }: any) {
   const userPlaceHolder = <CiUser />;
   const groupPlaceHolder = <PiUsersThree />;
 
-  const getUserList = () => {
-    let list: any = (newChat ? allUserList : chatList).filter((x: any) => {
-      if (showUnRead) {
-        return x?.name?.toLowerCase()?.includes(search.toLocaleLowerCase());
-      } else {
-        return x?.name?.toLowerCase()?.includes(search.toLocaleLowerCase());
-      }
-    });
-    return list;
-  };
+  const GetChats = () => {
+    let list: any = newChat ? allUserList : chatList;
+    // .filter((x: any) => {
+    //   if (showUnRead) {
+    //     return x?.name?.toLowerCase()?.includes(search.toLocaleLowerCase());
+    //   } else {
+    //     return x?.name?.toLowerCase()?.includes(search.toLocaleLowerCase());
+    //   }
+    // });
 
-  const GetChatBox = (item: any) => {
-    return (
-      <li className={styles.card} onClick={() => handleChatClick(item)}>
-        <div className={styles.avatar}>
-          {item?.profilePicture ? (
-            <Image src={item.profilePicture} alt={item.name} fill={true} />
-          ) : item.isGroup ? (
-            groupPlaceHolder
-          ) : (
-            userPlaceHolder
+    if (!newChat) {
+      return (
+        <>
+          {list?.length > 0 &&
+            list.map((item: any, i: Number) => {
+              let isGroup = item.isGroup;
+              let groupDetails = item.group;
+              let chatMember = item.members?.[0];
+              return (
+                <li
+                  key={`chat-${i}`}
+                  className={styles.card}
+                  onClick={() => handleChatClick(item)}
+                >
+                  <div className={styles.avatar}>
+                    {isGroup && (
+                      <>
+                        {groupDetails.groupPicture ? (
+                          <Image
+                            src={groupDetails.groupPicture}
+                            alt={groupDetails.name}
+                            fill={true}
+                          />
+                        ) : (
+                          groupPlaceHolder
+                        )}
+                      </>
+                    )}
+                    {!isGroup && (
+                      <>
+                        {chatMember?.profilePicture ? (
+                          <Image
+                            src={chatMember?.profilePicture}
+                            alt={chatMember.name}
+                            fill={true}
+                          />
+                        ) : (
+                          userPlaceHolder
+                        )}
+                      </>
+                    )}
+                  </div>
+                  <div className={styles.box}>
+                    <div className={styles.nameAndTime}>
+                      <div className={styles.name}>
+                        {isGroup ? groupDetails?.name : chatMember?.name}
+                      </div>
+                      {item?.lastMessage?.createdAt && (
+                        <div className={styles.time}>
+                          {getTime(item.lastMessage.createdAt)}
+                        </div>
+                      )}
+                    </div>
+                    <div className={styles.lowerRow}>
+                      <div className={styles.message}>
+                        {isGroup && (
+                          <span>{item.lastMessage.sender.name} :</span>
+                        )}
+                        {item?.lastMessage?.content && item.lastMessage.content}
+                      </div>
+                      {/* {item.count > 0 && (
+                        <div className={styles.count}>{item.count}</div>
+                      )} */}
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          {list?.length == 0 && (
+            <li className={styles.noFound}>No Contact Found</li>
           )}
-        </div>
-        <div className={styles.box}>
-          <div className={styles.nameAndTime}>
-            <div className={styles.name}>{item.name}</div>
-            <div className={styles.time}>{item.time}</div>
-          </div>
-          <div className={styles.lowerRow}>
-            <div className={styles.message}>
-              {item?.isGroup && <span>{item.name} :</span>}
-              {item.message}
-            </div>
-            {item.count > 0 && <div className={styles.count}>{item.count}</div>}
-          </div>
-        </div>
-      </li>
-    );
+        </>
+      );
+    } else {
+      return (
+        <>
+          {list.length > 0 &&
+            list.map((item: any, i: Number) => (
+              <li
+                key={`newChat-${i}`}
+                className={styles.card}
+                onClick={() => handleNewChatClicked(item)}
+              >
+                <div className={styles.avatar}>
+                  {item?.profilePicture ? (
+                    <Image
+                      src={item?.profilePicture}
+                      alt={item.name}
+                      fill={true}
+                    />
+                  ) : (
+                    userPlaceHolder
+                  )}
+                </div>
+                <div className={styles.box}>
+                  <div className={styles.nameAndTime}>
+                    <div className={styles.name}>{item.name}</div>
+                  </div>
+                </div>
+              </li>
+            ))}
+          {list.length == 0 && (
+            <li className={styles.noFound}>No Contact Found</li>
+          )}
+        </>
+      );
+    }
   };
 
   const handleChatClick = async (item: any) => {
-    setSelectedChat(item);
-    if (item.isGroup) {
-    } else {
-      socket.emit("chatMessages", item._id, (msg: any) => {
-        scrollToBottom();
-        msgRef.current.focus();
-        setChatMessages(msg.reverse());
-      });
+    if (item?._id) {
+      dispatch({ type: "CHAT_ID", payload: item?._id });
     }
+    setSelectedChat(item);
+    socket.emit("chatMessages", item._id, (msg: any) => {
+      scrollToBottom();
+      msgRef.current.focus();
+      setChatMessages(msg.reverse());
+    });
+  };
+
+  const handleNewChatClicked = async (item: any) => {
+    socket.emit("chatMessages", item._id, (chat: any) => {
+      dispatch({ type: "CHAT_ID", payload: chat._id });
+      dispatch({
+        type: "ALL_USER_LIST",
+        payload: allUserList.filter((item1: any) => item1._id != item._id),
+      });
+      dispatch({
+        type: "CHAT_LIST",
+        payload: [chat, ...chatList],
+      });
+      setNewChat(false);
+      setSelectedChat(chat);
+    });
   };
 
   const handleSendMessage = (e: any) => {
     e.preventDefault();
-    socket.emit(
-      "sendMessage",
-      message,
-      selectedChat._id,
-      "text",
-      (msg: any) => {
-        setChatMessages((prev: any) => [...prev, msg]);
-        setMessage("");
-        scrollToBottom();
-      }
-    );
+    socket.emit("sendMessage", message, selectedChatId, "text", (msg: any) => {
+      setChatMessages((prev: any) => [...prev, msg]);
+      setMessage("");
+      scrollToBottom();
+    });
   };
 
   const scrollToBottom = () => {
@@ -119,22 +215,15 @@ export default function Chat({ socket, users, userDetails, allUserList }: any) {
     } catch (error) {}
   };
 
-  const getTime = (time: string) => {
-    return moment(time).format("hh:mm A");
-  };
-
-  useEffect(() => {
-    socket.on("message", (message: any) => {
-      setChatMessages((prev: any) => [...prev, message]);
-      scrollToBottom();
-    });
-    socket.emit("chatList",  (arr: any) => {
-      setChatList(arr);
-    });
-    return () => {
-      socket.off("message");
-    };
-  }, []);
+  // useEffect(() => {
+  //   socket.on("message", (message: any) => {
+  //     setChatMessages((prev: any) => [...prev, message]);
+  //     scrollToBottom();
+  //   });
+  //   return () => {
+  //     socket.off("message");
+  //   };
+  // }, []);
 
   return (
     <div className={styles.wrapper}>
@@ -167,13 +256,7 @@ export default function Chat({ socket, users, userDetails, allUserList }: any) {
           </div>
         </div>
         <ul>
-          {getUserList().length > 0 &&
-            getUserList()?.map((x: any, i: any) => (
-              <GetChatBox {...x} key={`user-${i}`} />
-            ))}
-          {getUserList().length == 0 && (
-            <li className={styles.noFound}>No Contact Found</li>
-          )}
+          <GetChats />
         </ul>
       </div>
       {selectedChat ? (
