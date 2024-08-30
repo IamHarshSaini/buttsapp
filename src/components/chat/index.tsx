@@ -10,6 +10,7 @@ import { IoMdSend } from "react-icons/io";
 import { GrAttachment } from "react-icons/gr";
 import { PiUsersThree } from "react-icons/pi";
 import { MdPersonAddAlt } from "react-icons/md";
+import { MdPersonAddAlt1 } from "react-icons/md";
 import { IoFilterCircle } from "react-icons/io5";
 import { IoVideocamSharp } from "react-icons/io5";
 import { BsEmojiExpressionless } from "react-icons/bs";
@@ -163,27 +164,26 @@ export default function Chat({
     if (item?._id) {
       dispatch({ type: "CHAT_ID", payload: item?._id });
     }
-    setSelectedChat(item);
-    socket.emit("chatMessages", item._id, (msg: any) => {
-      scrollToBottom();
-      msgRef.current.focus();
-      setChatMessages(msg.reverse());
-    });
+    // setSelectedChat(item);
+    // socket.emit("getChatMessages", item._id, (msg: any) => {
+    //   scrollToBottom();
+    //   msgRef.current.focus();
+    //   setChatMessages(msg.reverse());
+    // });
   };
 
   const handleNewChatClicked = async (item: any) => {
-    socket.emit("chatMessages", item._id, (chat: any) => {
+    socket.emit("createNewChat", item._id, ({ chat, messages }: any) => {
       dispatch({ type: "CHAT_ID", payload: chat._id });
-      dispatch({
-        type: "ALL_USER_LIST",
-        payload: allUserList.filter((item1: any) => item1._id != item._id),
-      });
       dispatch({
         type: "CHAT_LIST",
         payload: [chat, ...chatList],
       });
       setNewChat(false);
       setSelectedChat(chat);
+      if (messages.length > 0) {
+        setChatMessages(messages.reverse());
+      }
     });
   };
 
@@ -215,6 +215,8 @@ export default function Chat({
     } catch (error) {}
   };
 
+  console.log(chatList)
+
   // useEffect(() => {
   //   socket.on("message", (message: any) => {
   //     setChatMessages((prev: any) => [...prev, message]);
@@ -231,9 +233,15 @@ export default function Chat({
         <div className={styles.header}>
           <div className={styles.title}>Chat</div>
           <div className={styles.newChatAndSort}>
-            <MdPersonAddAlt
-              onClick={() => setNewChat((prev: Boolean) => !prev)}
-            />
+            {newChat ? (
+              <MdPersonAddAlt1
+                onClick={() => setNewChat((prev: Boolean) => !prev)}
+              />
+            ) : (
+              <MdPersonAddAlt
+                onClick={() => setNewChat((prev: Boolean) => !prev)}
+              />
+            )}
             {!showUnRead ? (
               <IoFilterCircleOutline
                 onClick={() => setShowUnRead((prev: any) => !prev)}
