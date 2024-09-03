@@ -1,5 +1,4 @@
 import dynamic from "next/dynamic";
-import React, { useEffect, useState } from "react";
 import styles from "./index.module.scss";
 import { FaRegStar } from "react-icons/fa";
 import { PiSlideshow } from "react-icons/pi";
@@ -7,6 +6,7 @@ import { IoCallOutline } from "react-icons/io5";
 import { LuMessagesSquare } from "react-icons/lu";
 import { IoArchiveOutline } from "react-icons/io5";
 import { IoSettingsOutline } from "react-icons/io5";
+import React, { useEffect, useState } from "react";
 
 // components
 const Chat = dynamic(() => import("@/components/chat"), { ssr: false });
@@ -56,23 +56,6 @@ export default function Buttsapp(props: any) {
     }
   };
 
-  useEffect(() => {
-    if (isConnected) {
-      socket.emit("getAllUserList", (list: any) => {
-        dispatch({ type: "ALL_USER_LIST", payload: list });
-      });
-      socket.emit("chatList", (list: any) => {
-        dispatch({ type: "CHAT_LIST", payload: list });
-      });
-      // socket.on("updateChatList", (item: any) => {
-      //   dispatch({ type: "UPDATE_CHAT_LIST", payload: item });
-      // });
-    }
-    return () => {
-      // socket.off("updateChatList");
-    };
-  }, [isConnected]);
-
   return (
     <div className={styles.layout}>
       <ul className={styles.list}>
@@ -88,7 +71,7 @@ export default function Buttsapp(props: any) {
           </li>
         ))}
       </ul>
-      {isConnected && items[selectedModuleIndex].comp}
+      {items[selectedModuleIndex].comp}
     </div>
   );
 }

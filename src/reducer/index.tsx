@@ -1,10 +1,10 @@
 export const intialStates = {
-  userDetails: {},
-  isConnected: false,
-  isUserLoggedIn: false,
-  allUserList: [],
   chatList: [],
+  userDetails: {},
+  allUserList: [],
+  isConnected: false,
   selectedChatId: null,
+  isUserLoggedIn: false
 };
 
 export default function reducer(state: any, action: any) {
@@ -21,6 +21,19 @@ export default function reducer(state: any, action: any) {
       return { ...state, chatList: action.payload };
     case "CHAT_ID":
       return { ...state, selectedChatId: action.payload };
+    case "USER_STATUS_UPDATE":
+      const { status, userId } = action.payload;
+      return {
+        ...state,
+        chatList: state.chatList.map((item: any) => {
+          if (item["chatMember"]?._id == userId) {
+            item["chatMember"]["isOnline"] = status;
+            return item;
+          } else {
+            return item;
+          }
+        }),
+      };
     default:
       break;
   }
