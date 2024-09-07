@@ -33,6 +33,7 @@ function Chat({
   const msgRef: any = useRef(null);
   const [search, setSearch] = useState<any>("");
   const [message, setMessage] = useState<any>("");
+  const [showAbout, setShowAbout] = useState<any>(false);
   const [newChat, setNewChat] = useState<Boolean>(false);
   const [showUnRead, setShowUnRead] = useState<any>(false);
 
@@ -297,7 +298,10 @@ function Chat({
                 )}
               </div>
               <div className={styles.about}>
-                <div className={styles.name}>
+                <div
+                  className={styles.name}
+                  onClick={() => setShowAbout((prev: any) => !prev)}
+                >
                   {selectedChat.chatMember.name}
                 </div>
                 <div
@@ -371,10 +375,17 @@ function Chat({
             width={100}
           />
           <button onClick={() => toggleConnection()}>
-            {socket.connected ? "true" : "false"}
+            {socket?.connected ? "true" : "false"}
           </button>
         </div>
       );
+    }
+  };
+
+  const About = () => {
+    if (selectedChat?.isGroup) {
+    } else {
+      return <></>;
     }
   };
 
@@ -386,9 +397,10 @@ function Chat({
   }, [selectedChatId, chatList]);
 
   return (
-    <div className={styles.wrapper}>
+    <div className={`${styles.wrapper} ${showAbout ? styles.about : ""}`}>
       <ChatList />
       <ChatInfo />
+      {showAbout && <About />}
     </div>
   );
 }

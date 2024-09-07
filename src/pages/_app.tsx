@@ -25,15 +25,17 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     let { butsapp }: any = cookies.getAll();
-    if (butsapp && !state.isUserLoggedIn && typeof butsapp == "string") {
-      dispatch({ type: "IS_USER_LOGGED_IN", payload: true });
-      dispatch({ type: "USER_DETAILS", payload: jwtDecode(butsapp) });
-      initializeSocket({ dispatch });
+    if (butsapp && typeof butsapp == "string") {
+      if (!state.isUserLoggedIn) {
+        dispatch({ type: "IS_USER_LOGGED_IN", payload: true });
+        dispatch({ type: "USER_DETAILS", payload: jwtDecode(butsapp) });
+        initializeSocket({ dispatch });
+      }
     } else {
       cookies.remove("butsapp");
     }
     return () => {
-      if (state.isUserLoggedIn && socket) {
+      if (state.isUserLoggedIn) {
         removeListners();
       }
     };
