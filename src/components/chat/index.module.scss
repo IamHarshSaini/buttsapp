@@ -131,8 +131,8 @@ $padding: 15px 25px;
                 &.card {
                     gap: 10px;
                     display: grid;
-                    place-items: center;
                     padding: 10px 20px;
+                    place-items: center;
                     border-bottom: var(--border-1);
                     grid-template-columns: 35px 1fr;
 
@@ -192,6 +192,10 @@ $padding: 15px 25px;
                             }
                         }
                     }
+                }
+
+                &:not(.card){
+                  padding: 10px 20px;
                 }
 
                 &:last-child {

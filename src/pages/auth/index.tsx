@@ -9,8 +9,8 @@ import { FaXTwitter } from "react-icons/fa6";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 
 // api
-import { getSocialurl, verifySocialAuth } from "@/api.service";
 import Cookies from "universal-cookie";
+import { getSocialurl, verifySocialAuth } from "@/api.service";
 
 export const getServerSideProps = async ({ params, query }: any) => {
   try {
@@ -41,9 +41,9 @@ export const getServerSideProps = async ({ params, query }: any) => {
 export default function Login({ token, user, toast, error, children }: any) {
   let activeIndex = 0;
   const router = useRouter();
+  const cookies = new Cookies();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
-  const cookies = new Cookies(null, { path: "/" });
   const [rowCount, setRowCount] = useState<any>(30);
   const [clientSide, setClientSide] = useState(false);
   const [columnCount, setColumnCount] = useState<any>();
@@ -127,7 +127,11 @@ export default function Login({ token, user, toast, error, children }: any) {
 
   useEffect(() => {
     if (token) {
-      cookies.set("butsapp", token);
+      const futureDate = new Date();
+      futureDate.setFullYear(futureDate.getFullYear() + 100);
+      cookies.set("butsapp", token, {
+        expires: futureDate,
+      });
       router.push("/");
     }
     if (error) {

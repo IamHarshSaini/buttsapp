@@ -9,32 +9,34 @@ import { IoMdSend } from "react-icons/io";
 import { getTime } from "@/utils/constant";
 import { toggleConnection } from "@/socket";
 import { GrAttachment } from "react-icons/gr";
+import { IoCheckmark } from "react-icons/io5";
 import { PiUsersThree } from "react-icons/pi";
 import { MdPersonAddAlt } from "react-icons/md";
 import { MdPersonAddAlt1 } from "react-icons/md";
 import { IoFilterCircle } from "react-icons/io5";
 import { IoVideocamSharp } from "react-icons/io5";
+import { IoCheckmarkDone } from "react-icons/io5";
 import { BsEmojiExpressionless } from "react-icons/bs";
 import { IoFilterCircleOutline } from "react-icons/io5";
 import { MdOutlineKeyboardVoice } from "react-icons/md";
 import React, { useEffect, useRef, useState } from "react";
 
-export default function Chat({
+function Chat({
   socket,
   chatList,
   dispatch,
   userDetails,
   allUserList,
+  chatMessages,
   selectedChatId,
 }: any) {
-  const msgRef: any = useRef();
+  const msgRef: any = useRef(null);
   const [search, setSearch] = useState<any>("");
   const [message, setMessage] = useState<any>("");
   const [newChat, setNewChat] = useState<Boolean>(false);
   const [showUnRead, setShowUnRead] = useState<any>(false);
 
   // selected chat states
-  const [chatMessgaes, setChatMessages] = useState<any>([]);
   const [selectedChat, setSelectedChat] = useState<any>(null);
 
   // constant
@@ -44,18 +46,19 @@ export default function Chat({
   const handleChatClick = async (item: any) => {
     setSelectedChat(item);
     socket.emit("getChatMessages", item._id, (msg: any) => {
-      msgRef.current.focus();
-      setChatMessages(msg);
       dispatch({ type: "CHAT_ID", payload: item?._id });
+      dispatch({ type: "SET_CHAT_MESSAGES", payload: msg });
+      setTimeout(() => {
+        msgRef.current.focus();
+      }, 100);
     });
   };
 
   const handleNewChatClicked = async (item: any) => {
     socket.emit("createNewChat", item._id, ({ chat, messages }: any) => {
       dispatch({ type: "CHAT_ID", payload: chat._id });
-      debugger;
       let isAvailable = chatList.find(
-        (element: any) => element._id == chat._id,
+        (element: any) => element._id == chat._id
       );
       if (!isAvailable) {
         dispatch({
@@ -66,7 +69,7 @@ export default function Chat({
       setNewChat(false);
       setSelectedChat(chat);
       if (messages.length > 0) {
-        setChatMessages(messages.reverse());
+        dispatch({ type: "SET_CHAT_MESSAGES", payload: messages });
       }
     });
   };
@@ -81,10 +84,11 @@ export default function Chat({
         chatId: selectedChatId,
         receiverId: selectedChat.chatMember._id,
       },
-      (msg: any) => {
-        setChatMessages((prev: any) => [msg, ...prev]);
+      ({ message, updatedChat }: any) => {
+        dispatch({ type: "ADD_NEW_CHAT_MESSAGES", payload: message });
+        dispatch({ type: "UPDATE_CHAT", payload: updatedChat });
         setMessage("");
-      },
+      }
     );
   };
 
@@ -142,7 +146,9 @@ export default function Chat({
                   return (
                     <li
                       key={`chat-${i}`}
-                      className={`${styles.card} ${selectedChatId == item._id ? styles.active : ""}`}
+                      className={`${styles.card} ${
+                        selectedChatId == item._id ? styles.active : ""
+                      }`}
                       onClick={() => handleChatClick(item)}
                     >
                       <div className={styles.avatar}>
@@ -211,7 +217,6 @@ export default function Chat({
                 list.map((item: any, i: Number) => (
                   <li
                     key={`newChat-${i}`}
-                    Ï
                     className={styles.card}
                     onClick={() => handleNewChatClicked(item)}
                   >
@@ -244,6 +249,21 @@ export default function Chat({
   };
 
   const ChatInfo = () => {
+    const GetMessageStatus = (item: any) => {
+      const { sender } = item;
+      if (sender == userDetails._id) {
+        if (item?.readBy?.length > 0) {
+          return <IoCheckmarkDone style={{ color: "#4FB6EC" }} />;
+        } else if (item?.deliveredTo?.length > 0) {
+          return <IoCheckmarkDone />;
+        } else {
+          return <IoCheckmark />;
+        }
+      } else {
+        return <></>;
+      }
+    };
+
     if (selectedChat) {
       return (
         <div className={styles.selectedChat} id="chat-container">
@@ -290,7 +310,7 @@ export default function Chat({
                   {selectedChat?.chatMember?.isOnline
                     ? "online"
                     : `Last online ${getTime(
-                        selectedChat.chatMember.lastSeen,
+                        selectedChat.chatMember.lastSeen
                       )}`}
                 </div>
               </div>
@@ -304,12 +324,13 @@ export default function Chat({
             </div>
           </div>
           <ul>
-            {chatMessgaes?.map((item: any, i: any) => (
+            {chatMessages?.map((item: any, i: any) => (
               <li
                 key={`messgae-${i}`}
                 className={item.sender == userDetails._id ? styles.right : ""}
               >
                 <div className={styles.box}>
+                  <GetMessageStatus {...item} />
                   {item.content}
                   <span>{getTime(item.createdAt)}</span>
                 </div>
@@ -362,7 +383,7 @@ export default function Chat({
     if (chatInfo) {
       setSelectedChat(chatInfo);
     }
-  }, [chatList]);
+  }, [selectedChatId, chatList]);
 
   return (
     <div className={styles.wrapper}>
@@ -371,3 +392,5 @@ export default function Chat({
     </div>
   );
 }
+
+export default React.memo(Chat);

@@ -4,7 +4,7 @@ import Cookies from "universal-cookie";
 
 export default function Settings() {
   const router = useRouter();
-  const cokkies = new Cookies(null, { path: "/" });
+  const cokkies = new Cookies();
 
   const handleLogoutClick = () => {
     cokkies.remove("butsapp");
