@@ -1,13 +1,11 @@
-import Image from "next/image";
+// icons
 import { CiUser } from "react-icons/ci";
-import styles from "./index.module.scss";
 import { CiSearch } from "react-icons/ci";
 import { CiCamera } from "react-icons/ci";
 import { IoMdCall } from "react-icons/io";
 import { IoMdMore } from "react-icons/io";
 import { IoMdSend } from "react-icons/io";
 import { getTime } from "@/utils/constant";
-import { toggleConnection } from "@/socket";
 import { GrAttachment } from "react-icons/gr";
 import { IoCheckmark } from "react-icons/io5";
 import { PiUsersThree } from "react-icons/pi";
@@ -19,23 +17,36 @@ import { IoCheckmarkDone } from "react-icons/io5";
 import { BsEmojiExpressionless } from "react-icons/bs";
 import { IoFilterCircleOutline } from "react-icons/io5";
 import { MdOutlineKeyboardVoice } from "react-icons/md";
+
+// next and styles
+import Image from "next/image";
+import styles from "./index.module.scss";
 import React, { useEffect, useRef, useState } from "react";
 
-function Chat({
-  socket,
-  chatList,
-  dispatch,
-  userDetails,
-  allUserList,
-  chatMessages,
-  selectedChatId,
-}: any) {
+// redux
+import {
+  updateChat,
+  setChatList,
+  setChatMessages,
+  addNewChatMessage,
+  setSelectedChatId,
+} from "@/redux/reducer";
+import { useDispatch, useSelector } from "react-redux";
+
+// common
+import { socket, toggleConnection } from "@/socket";
+
+function Chat() {
+  const { chatList, userDetails, allUserList, chatMessages, selectedChatId } =
+    useSelector((state: any) => state.root);
+
+  const dispatch = useDispatch();
   const msgRef: any = useRef(null);
   const [search, setSearch] = useState<any>("");
   const [message, setMessage] = useState<any>("");
   const [showAbout, setShowAbout] = useState<any>(false);
   const [newChat, setNewChat] = useState<Boolean>(false);
-  const [showUnRead, setShowUnRead] = useState<any>(false);
+  const [showUnRead, setShowUnRead] = useState<Boolean>(false);
 
   // selected chat states
   const [selectedChat, setSelectedChat] = useState<any>(null);
@@ -45,32 +56,28 @@ function Chat({
   const groupPlaceHolder = <PiUsersThree />;
 
   const handleChatClick = async (item: any) => {
-    setSelectedChat(item);
-    socket.emit("getChatMessages", item._id, (msg: any) => {
-      dispatch({ type: "CHAT_ID", payload: item?._id });
-      dispatch({ type: "SET_CHAT_MESSAGES", payload: msg });
-      setTimeout(() => {
-        msgRef.current.focus();
-      }, 100);
-    });
+    if (selectedChatId != item._id) {
+      socket.emit("getChatMessages", item._id, (Messages: any[]) => {
+        setSelectedChat(item);
+        dispatch(setChatMessages(Messages));
+        dispatch(setSelectedChatId(item?._id));
+      });
+    }
   };
 
   const handleNewChatClicked = async (item: any) => {
     socket.emit("createNewChat", item._id, ({ chat, messages }: any) => {
-      dispatch({ type: "CHAT_ID", payload: chat._id });
-      let isAvailable = chatList.find(
+      dispatch(setSelectedChatId(chat._id));
+      let isAvailable = chatList.some(
         (element: any) => element._id == chat._id
       );
       if (!isAvailable) {
-        dispatch({
-          type: "CHAT_LIST",
-          payload: [chat, ...chatList],
-        });
+        setChatList([chat, ...chatList]);
       }
       setNewChat(false);
       setSelectedChat(chat);
       if (messages.length > 0) {
-        dispatch({ type: "SET_CHAT_MESSAGES", payload: messages });
+        dispatch(setChatMessages(messages));
       }
     });
   };
@@ -86,8 +93,8 @@ function Chat({
         receiverId: selectedChat.chatMember._id,
       },
       ({ message, updatedChat }: any) => {
-        dispatch({ type: "ADD_NEW_CHAT_MESSAGES", payload: message });
-        dispatch({ type: "UPDATE_CHAT", payload: updatedChat });
+        dispatch(addNewChatMessage(message));
+        dispatch(updateChat(updatedChat))
         setMessage("");
       }
     );

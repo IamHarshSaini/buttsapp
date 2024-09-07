@@ -47,11 +47,3 @@ export const getSocialurl = async (social: any) => {
 export const verifySocialAuth = async (social: any, code: any) => {
   return await api.post(`auth/social/${social}`, { code });
 };
-
-export const getAllUsers = async () => {
-  return await api.get("auth/users");
-};
-
-export const getChatMessage = async (sender: any, receiver: any) => {
-  return await api.get("message", { params: { sender, receiver } });
-};

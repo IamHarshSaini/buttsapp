@@ -1,9 +1,20 @@
+import { store } from "@/redux";
 import { io } from "socket.io-client";
 import Cookies from "universal-cookie";
 
+// redux
+import {
+  setChatList,
+  setAllUserList,
+  updateUserStatus,
+  setSocketConnected,
+  addNewChatMessageBySender,
+} from "@/redux/reducer";
+const { dispatch } = store;
+
 export let socket: any = null;
 
-export const initializeSocket = ({ dispatch }: any) => {
+export const initializeSocket = () => {
   const cookies = new Cookies();
   let { butsapp }: any = cookies.getAll();
 
@@ -18,30 +29,30 @@ export const initializeSocket = ({ dispatch }: any) => {
       },
     });
   }
-  setupListeners({ dispatch });
+  setupListeners();
   return socket;
 };
 
-export const setupListeners = ({ dispatch }: any) => {
+export const setupListeners = () => {
   if (!socket) return;
 
   function onConnect() {
-    dispatch({ type: "SOCKET_CONNECTED", payload: true });
+    dispatch(setSocketConnected(true));
 
     socket.emit("getAllUserList", (list: any) => {
-      dispatch({ type: "ALL_USER_LIST", payload: list });
+      dispatch(setAllUserList(list));
     });
 
     socket.emit("chatList", (list: any) => {
-      dispatch({ type: "CHAT_LIST", payload: list });
+      dispatch(setChatList(list));
     });
 
     socket.on("message", (res: any) => {
-      dispatch({ type: "ADD_NEW_CHAT_MESSAGES_BY_SENDER", payload: res });
+      dispatch(addNewChatMessageBySender(res));
     });
 
     socket.on("userStatusUpdate", (res: any) => {
-      dispatch({ type: "USER_STATUS_UPDATE", payload: res });
+      updateUserStatus(res);
     });
 
     addToSocketListeners("message");

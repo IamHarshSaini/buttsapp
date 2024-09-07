@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import styles from "./index.module.scss";
+import { useSelector } from "react-redux";
 import { FaRegStar } from "react-icons/fa";
 import { PiSlideshow } from "react-icons/pi";
 import { IoCallOutline } from "react-icons/io5";
@@ -17,35 +18,35 @@ const Archives = dynamic(() => import("@/components/archives"), { ssr: false });
 const Settings = dynamic(() => import("@/components/settings"), { ssr: false });
 
 export default function Buttsapp(props: any) {
-  const { isConnected, socket, dispatch } = props;
   const [selectedModuleIndex, setSelectedModuleIndex] = useState<any>(0);
+  const { isConnected } = useSelector((state: any) => state.root);
 
   const items: any = [
     {
-      comp: <Chat {...props} />,
+      comp: <Chat />,
       icon: <LuMessagesSquare />,
     },
     {
-      comp: <Phone {...props} />,
+      comp: <Phone />,
       icon: <IoCallOutline />,
     },
     {
-      comp: <Stories {...props} />,
+      comp: <Stories />,
       icon: <PiSlideshow />,
     },
     {
       icon: <hr />,
     },
     {
-      comp: <Archives {...props} />,
-      icon: <IoArchiveOutline {...props} />,
+      comp: <Archives />,
+      icon: <IoArchiveOutline />,
     },
     {
-      comp: <Starred {...props} />,
+      comp: <Starred />,
       icon: <FaRegStar />,
     },
     {
-      comp: <Settings {...props} />,
+      comp: <Settings />,
       icon: <IoSettingsOutline />,
     },
   ];
@@ -71,7 +72,7 @@ export default function Buttsapp(props: any) {
           </li>
         ))}
       </ul>
-      {items[selectedModuleIndex].comp}
+      {isConnected && items[selectedModuleIndex].comp}
     </div>
   );
 }
