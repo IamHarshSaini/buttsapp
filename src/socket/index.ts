@@ -7,6 +7,7 @@ import {
   setChatList,
   setAllUserList,
   updateUserStatus,
+  updateChatMessage,
   setSocketConnected,
   addNewChatMessageBySender,
 } from "@/redux/reducer";
@@ -51,11 +52,16 @@ export const setupListeners = () => {
       dispatch(addNewChatMessageBySender(res));
     });
 
+    socket.on("updateMessage", (message: any) => {
+      dispatch(updateChatMessage(message));
+    });
+
     socket.on("userStatusUpdate", (res: any) => {
-      updateUserStatus(res);
+      dispatch(updateUserStatus(res));
     });
 
     addToSocketListeners("message");
+    addToSocketListeners("updateMessage");
     addToSocketListeners("userStatusUpdate");
   }
 
@@ -93,8 +99,15 @@ export const removeListners = () => {
 export const toggleConnection = () => {
   if (!socket) return;
   if (socket?.connected) {
+    dispatch(setSocketConnected(false));
     socket.disconnect();
   } else {
     socket.connect();
+    dispatch(setSocketConnected(true));
   }
+};
+
+// events custom
+export const markAsRead = (messageId: any, userId: any, senderId: any) => {
+  socket.emit("markAsRead", messageId, userId, senderId);
 };

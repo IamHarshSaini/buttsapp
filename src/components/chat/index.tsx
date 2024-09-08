@@ -21,7 +21,7 @@ import { MdOutlineKeyboardVoice } from "react-icons/md";
 // next and styles
 import Image from "next/image";
 import styles from "./index.module.scss";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
 // redux
 import {
@@ -29,7 +29,7 @@ import {
   setChatList,
   setChatMessages,
   addNewChatMessage,
-  setSelectedChatId,
+  setSelectedChat,
 } from "@/redux/reducer";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -37,7 +37,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { socket, toggleConnection } from "@/socket";
 
 function Chat() {
-  const { chatList, userDetails, allUserList, chatMessages, selectedChatId } =
+  const { chatList, userDetails, allUserList, chatMessages, selectedChat } =
     useSelector((state: any) => state.root);
 
   const dispatch = useDispatch();
@@ -48,34 +48,29 @@ function Chat() {
   const [newChat, setNewChat] = useState<Boolean>(false);
   const [showUnRead, setShowUnRead] = useState<Boolean>(false);
 
-  // selected chat states
-  const [selectedChat, setSelectedChat] = useState<any>(null);
-
   // constant
   const userPlaceHolder = <CiUser />;
   const groupPlaceHolder = <PiUsersThree />;
 
   const handleChatClick = async (item: any) => {
-    if (selectedChatId != item._id) {
+    if (selectedChat?._id != item._id) {
       socket.emit("getChatMessages", item._id, (Messages: any[]) => {
-        setSelectedChat(item);
+        dispatch(setSelectedChat(item));
         dispatch(setChatMessages(Messages));
-        dispatch(setSelectedChatId(item?._id));
       });
     }
   };
 
   const handleNewChatClicked = async (item: any) => {
     socket.emit("createNewChat", item._id, ({ chat, messages }: any) => {
-      dispatch(setSelectedChatId(chat._id));
       let isAvailable = chatList.some(
         (element: any) => element._id == chat._id
       );
       if (!isAvailable) {
-        setChatList([chat, ...chatList]);
+        dispatch(setChatList([chat, ...chatList]));
       }
       setNewChat(false);
-      setSelectedChat(chat);
+      dispatch(setSelectedChat(chat));
       if (messages.length > 0) {
         dispatch(setChatMessages(messages));
       }
@@ -89,12 +84,12 @@ function Chat() {
       {
         message,
         type: "text",
-        chatId: selectedChatId,
+        chatId: selectedChat._id,
         receiverId: selectedChat.chatMember._id,
       },
       ({ message, updatedChat }: any) => {
         dispatch(addNewChatMessage(message));
-        dispatch(updateChat(updatedChat))
+        dispatch(updateChat(updatedChat));
         setMessage("");
       }
     );
@@ -155,7 +150,7 @@ function Chat() {
                     <li
                       key={`chat-${i}`}
                       className={`${styles.card} ${
-                        selectedChatId == item._id ? styles.active : ""
+                        selectedChat?._id == item._id ? styles.active : ""
                       }`}
                       onClick={() => handleChatClick(item)}
                     >
@@ -392,19 +387,12 @@ function Chat() {
   const About = () => {
     if (selectedChat?.isGroup) {
     } else {
-      return <></>;
+      return <div className={styles.aboutWrapper}></div>;
     }
   };
 
-  useEffect(() => {
-    let chatInfo = chatList.find((item: any) => item._id == selectedChatId);
-    if (chatInfo) {
-      setSelectedChat(chatInfo);
-    }
-  }, [selectedChatId, chatList]);
-
   return (
-    <div className={`${styles.wrapper} ${showAbout ? styles.about : ""}`}>
+    <div className={styles.wrapper}>
       <ChatList />
       <ChatInfo />
       {showAbout && <About />}

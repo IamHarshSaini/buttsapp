@@ -17,9 +17,8 @@ const Starred = dynamic(() => import("@/components/starred"), { ssr: false });
 const Archives = dynamic(() => import("@/components/archives"), { ssr: false });
 const Settings = dynamic(() => import("@/components/settings"), { ssr: false });
 
-export default function Buttsapp(props: any) {
+export default function HomePage() {
   const [selectedModuleIndex, setSelectedModuleIndex] = useState<any>(0);
-  const { isConnected } = useSelector((state: any) => state.root);
 
   const items: any = [
     {
@@ -72,7 +71,7 @@ export default function Buttsapp(props: any) {
           </li>
         ))}
       </ul>
-      {isConnected && items[selectedModuleIndex].comp}
+      {items[selectedModuleIndex].comp}
     </div>
   );
 }

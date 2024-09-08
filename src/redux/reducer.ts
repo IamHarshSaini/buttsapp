@@ -1,3 +1,4 @@
+import { markAsRead } from "@/socket";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: any = {
@@ -29,9 +30,6 @@ const rootSlice = createSlice({
     setChatList: (state, action: PayloadAction<any[]>) => {
       state.chatList = action.payload;
     },
-    setSelectedChatId: (state, action: PayloadAction<string | null>) => {
-      state.selectedChatId = action.payload;
-    },
     updateUserStatus: (
       state,
       action: PayloadAction<{
@@ -48,6 +46,19 @@ const rootSlice = createSlice({
         }
         return item;
       });
+      if (
+        state?.selectedChat &&
+        state?.selectedChat?.chatMember?._id == userId
+      ) {
+        state.selectedChat = {
+          ...state.selectedChat,
+          chatMember: {
+            ...state.selectedChat["chatMember"],
+            isOnline: status,
+            lastSeen,
+          },
+        };
+      }
     },
     setChatMessages: (state, action: PayloadAction<any[]>) => {
       state.chatMessages = action.payload;
@@ -64,8 +75,13 @@ const rootSlice = createSlice({
         updatedChat,
         ...state.chatList.filter((item: any) => item._id !== updatedChat._id),
       ];
-      if (state.selectedChatId === updatedChat._id) {
+      if (state?.selectedChat?._id === updatedChat?._id) {
         state.chatMessages.unshift(message);
+        markAsRead(
+          message._id,
+          state.userDetails._id,
+          updatedChat.chatMember._id
+        );
       }
     },
     updateChat: (state, action: PayloadAction<any>) => {
@@ -76,6 +92,18 @@ const rootSlice = createSlice({
         ),
       ];
     },
+    setSelectedChat: (state, action: PayloadAction<any>) => {
+      state.selectedChat = action.payload;
+    },
+    updateChatMessage: (state, action: PayloadAction<any>) => {
+      state.chatMessages = state.chatMessages.map((item: any) => {
+        if (item._id == action.payload._id) {
+          return action.payload;
+        } else {
+          return item;
+        }
+      });
+    },
   },
 });
 
@@ -84,11 +112,12 @@ export const {
   setChatList,
   setUserDetails,
   setAllUserList,
+  setSelectedChat,
   setChatMessages,
   updateUserStatus,
   setIsUserLoggedIn,
+  updateChatMessage,
   addNewChatMessage,
-  setSelectedChatId,
   setSocketConnected,
   addNewChatMessageBySender,
 } = rootSlice.actions;
