@@ -24,13 +24,13 @@ import styles from "./index.module.scss";
 import React, { useRef, useState } from "react";
 
 // redux
-import {
-  updateChat,
-  setChatList,
-  setChatMessages,
-  addNewChatMessage,
-  setSelectedChat,
-} from "@/redux/reducer";
+// import {
+//   updateChat,
+//   setChatList,
+//   setChatMessages,
+//   addNewChatMessage,
+//   setSelectedChat,
+// } from "@/redux/reducer";
 import { useDispatch, useSelector } from "react-redux";
 
 // common
@@ -54,45 +54,45 @@ function Chat() {
 
   const handleChatClick = async (item: any) => {
     if (selectedChat?._id != item._id) {
-      socket.emit("getChatMessages", item._id, (Messages: any[]) => {
-        dispatch(setSelectedChat(item));
-        dispatch(setChatMessages(Messages));
-      });
+      // socket.emit("getChatMessages", item._id, (Messages: any[]) => {
+      //   dispatch(setSelectedChat(item));
+      //   dispatch(setChatMessages(Messages));
+      // });
     }
   };
 
   const handleNewChatClicked = async (item: any) => {
-    socket.emit("createNewChat", item._id, ({ chat, messages }: any) => {
-      let isAvailable = chatList.some(
-        (element: any) => element._id == chat._id
-      );
-      if (!isAvailable) {
-        dispatch(setChatList([chat, ...chatList]));
-      }
-      setNewChat(false);
-      dispatch(setSelectedChat(chat));
-      if (messages.length > 0) {
-        dispatch(setChatMessages(messages));
-      }
-    });
+    // socket.emit("createNewChat", item._id, ({ chat, messages }: any) => {
+    //   let isAvailable = chatList.some(
+    //     (element: any) => element._id == chat._id
+    //   );
+    //   if (!isAvailable) {
+    //     dispatch(setChatList([chat, ...chatList]));
+    //   }
+    //   setNewChat(false);
+    //   dispatch(setSelectedChat(chat));
+    //   if (messages.length > 0) {
+    //     dispatch(setChatMessages(messages));
+    //   }
+    // });
   };
 
   const handleSendMessage = (e: any) => {
     e.preventDefault();
-    socket.emit(
-      "sendMessage",
-      {
-        message,
-        type: "text",
-        chatId: selectedChat._id,
-        receiverId: selectedChat.chatMember._id,
-      },
-      ({ message, updatedChat }: any) => {
-        dispatch(addNewChatMessage(message));
-        dispatch(updateChat(updatedChat));
-        setMessage("");
-      }
-    );
+    // socket.emit(
+    //   "sendMessage",
+    //   {
+    //     message,
+    //     type: "text",
+    //     chatId: selectedChat._id,
+    //     receiverId: selectedChat.chatMember._id,
+    //   },
+    //   ({ message, updatedChat }: any) => {
+    //     dispatch(addNewChatMessage(message));
+    //     dispatch(updateChat(updatedChat));
+    //     setMessage("");
+    //   }
+    // );
   };
 
   const ChatList = () => {
@@ -376,9 +376,9 @@ function Chat() {
             height={300}
             width={100}
           />
-          <button onClick={() => toggleConnection()}>
+          {/* <button onClick={() => toggleConnection()}>
             {socket?.connected ? "true" : "false"}
-          </button>
+          </button> */}
         </div>
       );
     }
