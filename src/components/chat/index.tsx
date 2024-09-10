@@ -1,21 +1,23 @@
 // icons
-import { CiUser } from "react-icons/ci";
-import { CiSearch } from "react-icons/ci";
-import { CiCamera } from "react-icons/ci";
-import { IoMdCall } from "react-icons/io";
-import { IoMdMore } from "react-icons/io";
-import { IoMdSend } from "react-icons/io";
-import { GrAttachment } from "react-icons/gr";
-import { IoCheckmark } from "react-icons/io5";
-import { PiUsersThree } from "react-icons/pi";
-import { MdPersonAddAlt } from "react-icons/md";
-import { MdPersonAddAlt1 } from "react-icons/md";
-import { IoFilterCircle } from "react-icons/io5";
-import { IoVideocamSharp } from "react-icons/io5";
-import { IoCheckmarkDone } from "react-icons/io5";
-import { BsEmojiExpressionless } from "react-icons/bs";
-import { IoFilterCircleOutline } from "react-icons/io5";
-import { MdOutlineKeyboardVoice } from "react-icons/md";
+import {
+  Mic,
+  Send,
+  User,
+  More,
+  Video,
+  Group,
+  Phone,
+  Check,
+  Emoji,
+  Camera,
+  Search,
+  FilterFill,
+  Attachment,
+  DoubleCheck,
+  FilterOutLine,
+  PersonAddFill,
+  PersonAddOutline,
+} from "@/utils/icon";
 
 // next and styles
 import Image from "next/image";
@@ -49,8 +51,8 @@ function Chat() {
   const [showUnRead, setShowUnRead] = useState<Boolean>(false);
 
   // constant
-  const userPlaceHolder = <CiUser />;
-  const groupPlaceHolder = <PiUsersThree />;
+  const userPlaceHolder = <User />;
+  const groupPlaceHolder = <Group />;
 
   const handleChatClick = async (item: any) => {
     if (selectedChat?._id != item._id) {
@@ -105,22 +107,20 @@ function Chat() {
           <div className={styles.title}>Chat</div>
           <div className={styles.newChatAndSort}>
             {newChat ? (
-              <MdPersonAddAlt1
+              <PersonAddFill
                 onClick={() => setNewChat((prev: Boolean) => !prev)}
               />
             ) : (
-              <MdPersonAddAlt
+              <PersonAddOutline
                 onClick={() => setNewChat((prev: Boolean) => !prev)}
               />
             )}
             {!showUnRead ? (
-              <IoFilterCircleOutline
+              <FilterOutLine
                 onClick={() => setShowUnRead((prev: any) => !prev)}
               />
             ) : (
-              <IoFilterCircle
-                onClick={() => setShowUnRead((prev: any) => !prev)}
-              />
+              <FilterFill onClick={() => setShowUnRead((prev: any) => !prev)} />
             )}
           </div>
         </div>
@@ -131,7 +131,7 @@ function Chat() {
               placeholder="Search or start new chat"
               onChange={(e: any) => setSearch(e.target.value)}
             />
-            <CiSearch />
+            <Search />
           </div>
         </div>
         <ul>
@@ -250,11 +250,11 @@ function Chat() {
       const { sender } = item;
       if (sender == userDetails._id) {
         if (item?.readBy?.length > 0) {
-          return <IoCheckmarkDone style={{ color: "#4FB6EC" }} />;
+          return <DoubleCheck color="#4FB6EC" />;
         } else if (item?.deliveredTo?.length > 0) {
-          return <IoCheckmarkDone />;
+          return <DoubleCheck />;
         } else {
-          return <IoCheckmark />;
+          return <Check />;
         }
       } else {
         return <></>;
@@ -317,10 +317,10 @@ function Chat() {
             </div>
 
             <div className={styles.actions}>
-              <IoMdCall />
-              <IoVideocamSharp />
-              <CiSearch />
-              <IoMdMore />
+              <Phone />
+              <Video />
+              <Search />
+              <More />
             </div>
           </div>
           <ul>
@@ -339,11 +339,11 @@ function Chat() {
           </ul>
 
           <div className={styles.messgaeBox}>
-            <BsEmojiExpressionless />
-            <GrAttachment />
+            <Emoji />
+            <Attachment />
             <form onSubmit={handleSendMessage}>
               <div className={styles.input}>
-                <CiCamera />
+                <Camera />
                 <input
                   ref={msgRef}
                   value={message}
@@ -352,11 +352,7 @@ function Chat() {
                   onChange={(e: any) => setMessage(e.target.value)}
                 />
               </div>
-              {message?.length > 0 ? (
-                <IoMdSend type="submit" />
-              ) : (
-                <MdOutlineKeyboardVoice />
-              )}
+              {message?.length > 0 ? <Send type="submit" /> : <Mic />}
             </form>
           </div>
         </div>

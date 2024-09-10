@@ -1,13 +1,16 @@
 import dynamic from "next/dynamic";
 import styles from "./index.module.scss";
 import { useSelector } from "react-redux";
-import { FaRegStar } from "react-icons/fa";
-import { PiSlideshow } from "react-icons/pi";
-import { IoCallOutline } from "react-icons/io5";
-import { LuMessagesSquare } from "react-icons/lu";
-import { IoArchiveOutline } from "react-icons/io5";
-import { IoSettingsOutline } from "react-icons/io5";
 import React, { useEffect, useState } from "react";
+
+import {
+  Status,
+  Setting,
+  Chat as ChatIcon,
+  Phone as PhoneIcon,
+  Starred as StarredIcon,
+  Archives as ArchivesIcon,
+} from "@/utils/icon";
 
 // components
 const Chat = dynamic(() => import("@/components/chat"), { ssr: false });
@@ -23,30 +26,30 @@ export default function HomePage() {
   const items: any = [
     {
       comp: <Chat />,
-      icon: <LuMessagesSquare />,
+      icon: <ChatIcon />,
     },
     {
       comp: <Phone />,
-      icon: <IoCallOutline />,
+      icon: <PhoneIcon />,
     },
     {
       comp: <Stories />,
-      icon: <PiSlideshow />,
+      icon: <Status />,
     },
     {
       icon: <hr />,
     },
     {
       comp: <Archives />,
-      icon: <IoArchiveOutline />,
+      icon: <ArchivesIcon />,
     },
     {
       comp: <Starred />,
-      icon: <FaRegStar />,
+      icon: <StarredIcon />,
     },
     {
       comp: <Settings />,
-      icon: <IoSettingsOutline />,
+      icon: <Setting />,
     },
   ];
 
