@@ -5,7 +5,6 @@ import { CiCamera } from "react-icons/ci";
 import { IoMdCall } from "react-icons/io";
 import { IoMdMore } from "react-icons/io";
 import { IoMdSend } from "react-icons/io";
-import { getTime } from "@/utils/constant";
 import { GrAttachment } from "react-icons/gr";
 import { IoCheckmark } from "react-icons/io5";
 import { PiUsersThree } from "react-icons/pi";
@@ -34,6 +33,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 
 // common
+import { getTime } from "@/utils/constant";
 import { socket, toggleConnection } from "@/socket";
 
 function Chat() {
