@@ -24,13 +24,13 @@ import styles from "./index.module.scss";
 import React, { useRef, useState } from "react";
 
 // redux
-// import {
-//   updateChat,
-//   setChatList,
-//   setChatMessages,
-//   addNewChatMessage,
-//   setSelectedChat,
-// } from "@/redux/reducer";
+import {
+  // updateChat,
+  // setChatList,
+  setChatMessages,
+  // addNewChatMessage,
+  setSelectedChat,
+} from "@/redux/reducer";
 import { useDispatch, useSelector } from "react-redux";
 
 // common
@@ -54,10 +54,10 @@ function Chat() {
 
   const handleChatClick = async (item: any) => {
     if (selectedChat?._id != item._id) {
-      // socket.emit("getChatMessages", item._id, (Messages: any[]) => {
-      //   dispatch(setSelectedChat(item));
-      //   dispatch(setChatMessages(Messages));
-      // });
+      socket.emit("getChatMessages", item._id, (Messages: any[]) => {
+        dispatch(setSelectedChat(item));
+        dispatch(setChatMessages(Messages));
+      });
     }
   };
 
@@ -77,22 +77,16 @@ function Chat() {
     // });
   };
 
-  const handleSendMessage = (e: any) => {
+  const handleSendMessage = async (e: any) => {
     e.preventDefault();
-    // socket.emit(
-    //   "sendMessage",
-    //   {
-    //     message,
-    //     type: "text",
-    //     chatId: selectedChat._id,
-    //     receiverId: selectedChat.chatMember._id,
-    //   },
-    //   ({ message, updatedChat }: any) => {
-    //     dispatch(addNewChatMessage(message));
-    //     dispatch(updateChat(updatedChat));
-    //     setMessage("");
-    //   }
-    // );
+    await socket.emit("sendMessage", {
+      message,
+      type: "text",
+      chatId: selectedChat._id,
+      isGroup: selectedChat.isGroup,
+      receiverId: selectedChat.chatMember._id,
+    });
+    setMessage("");
   };
 
   const ChatList = () => {

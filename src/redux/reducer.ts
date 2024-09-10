@@ -60,30 +60,16 @@ const rootSlice = createSlice({
     //     };
     //   }
     // },
-    // setChatMessages: (state, action: PayloadAction<any[]>) => {
-    //   state.chatMessages = action.payload;
-    // },
-    // addNewChatMessage: (state, action: PayloadAction<any>) => {
-    //   state.chatMessages.unshift(action.payload);
-    // },
-    // addNewChatMessageBySender: (
-    //   state,
-    //   action: PayloadAction<{ message: any; updatedChat: any }>
-    // ) => {
-    //   const { message, updatedChat } = action.payload;
-    //   state.chatList = [
-    //     updatedChat,
-    //     ...state.chatList.filter((item: any) => item._id !== updatedChat._id),
-    //   ];
-    //   if (state?.selectedChat?._id === updatedChat?._id) {
-    //     state.chatMessages.unshift(message);
-    //     markAsRead(
-    //       message._id,
-    //       state.userDetails._id,
-    //       updatedChat.chatMember._id
-    //     );
-    //   }
-    // },
+    setChatMessages: (state, action: PayloadAction<any[]>) => {
+      state.chatMessages = action.payload;
+    },
+    addNewMessages: (state, action: PayloadAction<any>) => {
+      const { message, updatedChat }: any = action.payload;
+      if (updatedChat?._id == state?.selectedChat?._id) {
+        state.chatMessages.unshift(message);
+      } else {
+      }
+    },
     // updateChat: (state, action: PayloadAction<any>) => {
     //   state.chatList = [
     //     action.payload,
@@ -92,9 +78,9 @@ const rootSlice = createSlice({
     //     ),
     //   ];
     // },
-    // setSelectedChat: (state, action: PayloadAction<any>) => {
-    //   state.selectedChat = action.payload;
-    // },
+    setSelectedChat: (state, action: PayloadAction<any>) => {
+      state.selectedChat = action.payload;
+    },
     // updateChatMessage: (state, action: PayloadAction<any>) => {
     //   state.chatMessages = state.chatMessages.map((item: any) => {
     //     if (item._id == action.payload._id) {
@@ -112,14 +98,13 @@ export const {
   setChatList,
   setUserDetails,
   setAllUserList,
-  // setSelectedChat,
-  // setChatMessages,
+  setSelectedChat,
+  setChatMessages,
   // updateUserStatus,
   setIsUserLoggedIn,
   // updateChatMessage,
-  // addNewChatMessage,
   setSocketConnected,
-  // addNewChatMessageBySender,
+  addNewMessages,
 } = rootSlice.actions;
 
 export default rootSlice.reducer;

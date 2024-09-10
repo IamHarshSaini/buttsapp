@@ -5,6 +5,7 @@ import Cookies from "universal-cookie";
 // redux
 import {
   setChatList,
+  addNewMessages,
   setAllUserList,
   // updateUserStatus,
   // updateChatMessage,
@@ -45,13 +46,12 @@ export const setupListeners = () => {
     });
 
     socket.emit("chatList", (list: any) => {
-      console.log(list)
       dispatch(setChatList(list));
     });
 
-    // socket.on("message", (res: any) => {
-    //   dispatch(addNewChatMessageBySender(res));
-    // });
+    socket.on("message", (res: any) => {
+      dispatch(addNewMessages(res));
+    });
 
     // socket.on("updateMessage", (message: any) => {
     //   dispatch(updateChatMessage(message));
