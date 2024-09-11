@@ -2,15 +2,13 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
 import styles from "./index.module.scss";
-import { FaGoogle } from "react-icons/fa";
-import { FaGithub } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import { FaXTwitter } from "react-icons/fa6";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 
 // api
 import Cookies from "universal-cookie";
 import { getSocialurl, verifySocialAuth } from "@/api.service";
+import { GitHub, Google, X } from "@/utils/icon";
 
 export const getServerSideProps = async ({ params, query }: any) => {
   try {
@@ -216,9 +214,9 @@ const GetSocialIcons = ({ toast }: any) => {
     <div className={styles.socialContainer}>
       <div className={styles.divider}>Or</div>
       <div className={styles.socialWrapper}>
-        <FaGoogle onClick={() => socialButtonClicked("google")} />
-        <FaGithub onClick={() => socialButtonClicked("github")} />
-        <FaXTwitter onClick={() => socialButtonClicked("facebook")} />
+        <Google onClick={() => socialButtonClicked("google")} />
+        <GitHub onClick={() => socialButtonClicked("github")} />
+        <X onClick={() => socialButtonClicked("facebook")} />
       </div>
     </div>
   );

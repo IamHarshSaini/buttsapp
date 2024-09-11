@@ -362,7 +362,7 @@ function Chat() {
         <div className={styles.default}>
           <Image
             alt="Bg"
-            src="/assets/images/WA_BG.gif"
+            src="/assets/icons/logo.svg"
             height={300}
             width={100}
           />
