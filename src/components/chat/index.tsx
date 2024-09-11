@@ -46,7 +46,7 @@ function Chat() {
   const msgRef: any = useRef(null);
   const [search, setSearch] = useState<any>("");
   const [message, setMessage] = useState<any>("");
-  const [showAbout, setShowAbout] = useState<any>(false);
+  const [showAbout, setShowAbout] = useState<Boolean>(false);
   const [newChat, setNewChat] = useState<Boolean>(false);
   const [showUnRead, setShowUnRead] = useState<Boolean>(false);
 
@@ -374,20 +374,29 @@ function Chat() {
     }
   };
 
-  const About = () => {
-    if (selectedChat?.isGroup) {
-    } else {
-      return <div className={styles.aboutWrapper}></div>;
-    }
-  };
-
   return (
     <div className={styles.wrapper}>
       <ChatList />
       <ChatInfo />
-      {showAbout && <About />}
+      <About showAbout={showAbout} selectedChat={selectedChat} />
     </div>
   );
 }
 
-export default React.memo(Chat);
+const About = ({ showAbout, selectedChat }: any) => {
+  if (selectedChat?.isGroup) {
+    return (
+      <div
+        className={`${styles.aboutWrapper} ${showAbout ? styles.visible : ""}`}
+      ></div>
+    );
+  } else {
+    return (
+      <div
+        className={`${styles.aboutWrapper} ${showAbout ? styles.visible : ""}`}
+      ></div>
+    );
+  }
+};
+
+export default Chat;
