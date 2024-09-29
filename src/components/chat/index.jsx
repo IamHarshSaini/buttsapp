@@ -35,38 +35,38 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 
 // common
+import { socket } from "@/socket";
 import { getTime } from "@/utils/constant";
-import { socket, toggleConnection } from "@/socket";
 
 function Chat() {
   const { chatList, userDetails, allUserList, chatMessages, selectedChat } =
-    useSelector((state: any) => state.root);
+    useSelector((state) => state.root);
 
   const dispatch = useDispatch();
-  const msgRef: any = useRef(null);
-  const [search, setSearch] = useState<any>("");
-  const [message, setMessage] = useState<any>("");
-  const [showAbout, setShowAbout] = useState<Boolean>(false);
-  const [newChat, setNewChat] = useState<Boolean>(false);
-  const [showUnRead, setShowUnRead] = useState<Boolean>(false);
+  const msgRef = useRef(null);
+  const [search, setSearch] = useState("");
+  const [message, setMessage] = useState("");
+  const [showAbout, setShowAbout] = useState(false);
+  const [newChat, setNewChat] = useState(false);
+  const [showUnRead, setShowUnRead] = useState(false);
 
   // constant
   const userPlaceHolder = <User />;
   const groupPlaceHolder = <Group />;
 
-  const handleChatClick = async (item: any) => {
+  const handleChatClick = async (item) => {
     if (selectedChat?._id != item._id) {
-      socket.emit("getChatMessages", item._id, (Messages: any[]) => {
+      socket.emit("getChatMessages", item._id, (Messages) => {
         dispatch(setSelectedChat(item));
         dispatch(setChatMessages(Messages));
       });
     }
   };
 
-  const handleNewChatClicked = async (item: any) => {
-    // socket.emit("createNewChat", item._id, ({ chat, messages }: any) => {
+  const handleNewChatClicked = async (item) => {
+    // socket.emit("createNewChat", item._id, ({ chat, messages }) => {
     //   let isAvailable = chatList.some(
-    //     (element: any) => element._id == chat._id
+    //     (element) => element._id == chat._id
     //   );
     //   if (!isAvailable) {
     //     dispatch(setChatList([chat, ...chatList]));
@@ -79,7 +79,7 @@ function Chat() {
     // });
   };
 
-  const handleSendMessage = async (e: any) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     await socket.emit("sendMessage", {
       message,
@@ -92,14 +92,7 @@ function Chat() {
   };
 
   const ChatList = () => {
-    let list: any = newChat ? allUserList : chatList;
-    // .filter((x: any) => {
-    //   if (showUnRead) {
-    //     return x?.name?.toLowerCase()?.includes(search.toLocaleLowerCase());
-    //   } else {
-    //     return x?.name?.toLowerCase()?.includes(search.toLocaleLowerCase());
-    //   }
-    // });
+    let list = newChat ? allUserList : chatList;
 
     return (
       <div className={styles.chats}>
@@ -107,20 +100,14 @@ function Chat() {
           <div className={styles.title}>Chat</div>
           <div className={styles.newChatAndSort}>
             {newChat ? (
-              <PersonAddFill
-                onClick={() => setNewChat((prev: Boolean) => !prev)}
-              />
+              <PersonAddFill onClick={() => setNewChat((prev) => !prev)} />
             ) : (
-              <PersonAddOutline
-                onClick={() => setNewChat((prev: Boolean) => !prev)}
-              />
+              <PersonAddOutline onClick={() => setNewChat((prev) => !prev)} />
             )}
             {!showUnRead ? (
-              <FilterOutLine
-                onClick={() => setShowUnRead((prev: any) => !prev)}
-              />
+              <FilterOutLine onClick={() => setShowUnRead((prev) => !prev)} />
             ) : (
-              <FilterFill onClick={() => setShowUnRead((prev: any) => !prev)} />
+              <FilterFill onClick={() => setShowUnRead((prev) => !prev)} />
             )}
           </div>
         </div>
@@ -129,7 +116,7 @@ function Chat() {
             <input
               value={search}
               placeholder="Search or start new chat"
-              onChange={(e: any) => setSearch(e.target.value)}
+              onChange={(e) => setSearch(e.target.value)}
             />
             <Search />
           </div>
@@ -138,7 +125,7 @@ function Chat() {
           {!newChat && (
             <>
               {list?.length > 0 &&
-                list.map((item: any, i: Number) => {
+                list.map((item, i) => {
                   let { isGroup, groupDetails, chatMember } = item;
                   return (
                     <li
@@ -211,7 +198,7 @@ function Chat() {
           {newChat && (
             <>
               {list.length > 0 &&
-                list.map((item: any, i: Number) => (
+                list.map((item, i) => (
                   <li
                     key={`newChat-${i}`}
                     className={styles.card}
@@ -246,7 +233,7 @@ function Chat() {
   };
 
   const ChatInfo = () => {
-    const GetMessageStatus = (item: any) => {
+    const GetMessageStatus = (item) => {
       const { sender } = item;
       if (sender == userDetails._id) {
         if (item?.readBy?.length > 0) {
@@ -296,7 +283,7 @@ function Chat() {
               <div className={styles.about}>
                 <div
                   className={styles.name}
-                  onClick={() => setShowAbout((prev: any) => !prev)}
+                  onClick={() => setShowAbout((prev) => !prev)}
                 >
                   {selectedChat.chatMember.name}
                 </div>
@@ -324,7 +311,7 @@ function Chat() {
             </div>
           </div>
           <ul>
-            {chatMessages?.map((item: any, i: any) => (
+            {chatMessages?.map((item, i) => (
               <li
                 key={`messgae-${i}`}
                 className={item.sender == userDetails._id ? styles.right : ""}
@@ -349,7 +336,7 @@ function Chat() {
                   value={message}
                   autoFocus={true}
                   placeholder="Type a message"
-                  onChange={(e: any) => setMessage(e.target.value)}
+                  onChange={(e) => setMessage(e.target.value)}
                 />
               </div>
               {message?.length > 0 ? <Send type="submit" /> : <Mic />}
@@ -366,9 +353,6 @@ function Chat() {
             height={300}
             width={100}
           />
-          {/* <button onClick={() => toggleConnection()}>
-            {socket?.connected ? "true" : "false"}
-          </button> */}
         </div>
       );
     }
@@ -378,25 +362,8 @@ function Chat() {
     <div className={styles.wrapper}>
       <ChatList />
       <ChatInfo />
-      <About showAbout={showAbout} selectedChat={selectedChat} />
     </div>
   );
 }
-
-const About = ({ showAbout, selectedChat }: any) => {
-  if (selectedChat?.isGroup) {
-    return (
-      <div
-        className={`${styles.aboutWrapper} ${showAbout ? styles.visible : ""}`}
-      ></div>
-    );
-  } else {
-    return (
-      <div
-        className={`${styles.aboutWrapper} ${showAbout ? styles.visible : ""}`}
-      ></div>
-    );
-  }
-};
 
 export default Chat;

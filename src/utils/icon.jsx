@@ -3,7 +3,7 @@ export const Chat = ({
   width = 24,
   onClick,
   color = "#54656F",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -26,7 +26,7 @@ export const Attachment = ({
   width = 24,
   onClick,
   color = "#6B7C85",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -49,7 +49,7 @@ export const Camera = ({
   width = 24,
   onClick,
   color = "#6B7C85",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -76,7 +76,7 @@ export const Emoji = ({
   width = 24,
   onClick,
   color = "#6B7C85",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -110,7 +110,7 @@ export const Group = ({
   width = 24,
   onClick,
   color = "#54656F",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -133,7 +133,7 @@ export const Mic = ({
   width = 24,
   onClick,
   color = "#6B7C85",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -156,7 +156,7 @@ export const More = ({
   width = 24,
   onClick,
   color = "#54656F",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -187,7 +187,7 @@ export const Phone = ({
   width = 24,
   onClick,
   color = "#6B7C85",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -210,7 +210,7 @@ export const Search = ({
   width = 24,
   onClick,
   color = "#6B7C85",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -235,7 +235,7 @@ export const Status = ({
   width = 24,
   onClick,
   color = "#54656F",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -273,7 +273,7 @@ export const Video = ({
   width = 24,
   onClick,
   color = "#6B7C85",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -296,7 +296,7 @@ export const Setting = ({
   width = 24,
   onClick,
   color = "currentColor",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -317,7 +317,7 @@ export const Starred = ({
   width = 23,
   onClick,
   color = "currentColor",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -338,7 +338,7 @@ export const Archives = ({
   width = 22,
   onClick,
   color = "currentColor",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -359,7 +359,7 @@ export const User = ({
   width = 24,
   onClick,
   color = "currentColor",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -380,7 +380,7 @@ export const Send = ({
   width = 24,
   onClick,
   color = "currentColor",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -401,7 +401,7 @@ export const Check = ({
   width = 24,
   onClick,
   color = "currentColor",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -422,7 +422,7 @@ export const DoubleCheck = ({
   width = 20,
   onClick,
   color = "currentColor",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -444,7 +444,7 @@ export const PersonAddOutline = ({
   width = 22,
   onClick,
   color = "currentColor",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -469,7 +469,7 @@ export const PersonAddFill = ({
   width = 22,
   onClick,
   color = "currentColor",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -494,7 +494,7 @@ export const FilterOutLine = ({
   width = 22,
   onClick,
   color = "currentColor",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -516,7 +516,7 @@ export const FilterFill = ({
   width = 22,
   onClick,
   color = "currentColor",
-}: any) => {
+}) => {
   return (
     <svg
       width={width}
@@ -532,7 +532,7 @@ export const FilterFill = ({
   );
 };
 
-export const Google = ({ onClick }: any) => {
+export const Google = ({ onClick }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -548,7 +548,7 @@ export const Google = ({ onClick }: any) => {
   );
 };
 
-export const GitHub = ({ onClick }: any) => {
+export const GitHub = ({ onClick }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -563,7 +563,7 @@ export const GitHub = ({ onClick }: any) => {
     </svg>
   );
 };
-export const X = ({ onClick }: any) => {
+export const X = ({ onClick }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

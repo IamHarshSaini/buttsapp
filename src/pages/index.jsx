@@ -1,7 +1,6 @@
 import dynamic from "next/dynamic";
+import React, { useState } from "react";
 import styles from "./index.module.scss";
-import { useSelector } from "react-redux";
-import React, { useEffect, useState } from "react";
 
 import {
   Status,
@@ -21,9 +20,9 @@ const Archives = dynamic(() => import("@/components/archives"), { ssr: false });
 const Settings = dynamic(() => import("@/components/settings"), { ssr: false });
 
 export default function HomePage() {
-  const [selectedModuleIndex, setSelectedModuleIndex] = useState<any>(0);
+  const [selectedModuleIndex, setSelectedModuleIndex] = useState(0);
 
-  const items: any = [
+  const items = [
     {
       comp: <Chat />,
       icon: <ChatIcon />,
@@ -53,7 +52,7 @@ export default function HomePage() {
     },
   ];
 
-  const handleModuleClick = (item: any, index: Number) => {
+  const handleModuleClick = (item, index) => {
     if (item?.comp) {
       setSelectedModuleIndex(index);
     }
@@ -62,7 +61,7 @@ export default function HomePage() {
   return (
     <div className={styles.layout}>
       <ul className={styles.list}>
-        {items.map((x: any, i: Number) => (
+        {items.map((x, i) => (
           <li
             className={`${styles.item} ${
               i == selectedModuleIndex ? styles.active : ""

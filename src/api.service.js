@@ -1,5 +1,5 @@
 import axios from "axios";
-let serverToken: any = null;
+let serverToken = null;
 
 // cookies
 import Cookies from "universal-cookie";
@@ -11,8 +11,8 @@ const api = axios.create({
 
 // Add a request interceptor
 api.interceptors.request.use(
-  function (config: any) {
-    let token: any = cookies.get("butsapp");
+  function (config) {
+    let token = cookies.get("butsapp");
     if (token) {
       config.headers.Authorization = token;
     } else if (serverToken) {
@@ -35,15 +35,15 @@ api.interceptors.response.use(
   }
 );
 
-export const setToken = (req: any) => {
+export const setToken = (req) => {
   const cookies = new Cookies(req.headers.cookie);
   serverToken = cookies.get("butsapp");
 };
 
-export const getSocialurl = async (social: any) => {
+export const getSocialurl = async (social) => {
   return await api.get(`auth/social/${social}`);
 };
 
-export const verifySocialAuth = async (social: any, code: any) => {
+export const verifySocialAuth = async (social, code) => {
   return await api.post(`auth/social/${social}`, { code });
 };

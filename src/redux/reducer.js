@@ -1,7 +1,7 @@
 import { markAsRead } from "@/socket";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const initialState: any = {
+const initialState = {
   chatList: [],
   userDetails: {},
   allUserList: [],
@@ -15,31 +15,31 @@ const rootSlice = createSlice({
   name: "root",
   initialState,
   reducers: {
-    setUserDetails: (state, action: PayloadAction<Record<string, any>>) => {
+    setUserDetails: (state, action ) => {
       state.userDetails = action.payload;
     },
-    setSocketConnected: (state, action: PayloadAction<boolean>) => {
+    setSocketConnected: (state, action) => {
       state.isConnected = action.payload;
     },
-    setIsUserLoggedIn: (state, action: PayloadAction<boolean>) => {
+    setIsUserLoggedIn: (state, action) => {
       state.isUserLoggedIn = action.payload;
     },
-    setAllUserList: (state, action: PayloadAction<any[]>) => {
+    setAllUserList: (state, action) => {
       state.allUserList = action.payload;
     },
-    setChatList: (state, action: PayloadAction<any[]>) => {
+    setChatList: (state, action) => {
       state.chatList = action.payload;
     },
     // updateUserStatus: (
     //   state,
-    //   action: PayloadAction<{
-    //     status: boolean;
-    //     userId: string;
-    //     lastSeen: string;
+    //   action<{
+    //     status;
+    //     userId;
+    //     lastSeen;
     //   }>
     // ) => {
     //   const { status, userId, lastSeen } = action.payload;
-    //   state.chatList = state.chatList.map((item: any) => {
+    //   state.chatList = state.chatList.map((item) => {
     //     if (item.chatMember?._id === userId) {
     //       item.chatMember.isOnline = status;
     //       item.chatMember.lastSeen = lastSeen;
@@ -60,29 +60,29 @@ const rootSlice = createSlice({
     //     };
     //   }
     // },
-    setChatMessages: (state, action: PayloadAction<any[]>) => {
+    setChatMessages: (state, action) => {
       state.chatMessages = action.payload;
     },
-    addNewMessages: (state, action: PayloadAction<any>) => {
-      const { message, updatedChat }: any = action.payload;
+    addNewMessages: (state, action) => {
+      const { message, updatedChat } = action.payload;
       if (updatedChat?._id == state?.selectedChat?._id) {
         state.chatMessages.unshift(message);
       } else {
       }
     },
-    // updateChat: (state, action: PayloadAction<any>) => {
+    // updateChat: (state, action) => {
     //   state.chatList = [
     //     action.payload,
     //     ...state.chatList.filter(
-    //       (item: any) => item._id !== action.payload._id
+    //       (item) => item._id !== action.payload._id
     //     ),
     //   ];
     // },
-    setSelectedChat: (state, action: PayloadAction<any>) => {
+    setSelectedChat: (state, action) => {
       state.selectedChat = action.payload;
     },
-    // updateChatMessage: (state, action: PayloadAction<any>) => {
-    //   state.chatMessages = state.chatMessages.map((item: any) => {
+    // updateChatMessage: (state, action) => {
+    //   state.chatMessages = state.chatMessages.map((item) => {
     //     if (item._id == action.payload._id) {
     //       return action.payload;
     //     } else {

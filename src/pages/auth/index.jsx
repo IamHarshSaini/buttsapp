@@ -2,19 +2,19 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
 import styles from "./index.module.scss";
-import { useEffect, useState } from "react";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
+
+import { useForm, Controller } from "react-hook-form";
 
 // api
 import Cookies from "universal-cookie";
 import { getSocialurl, verifySocialAuth } from "@/api.service";
 import { GitHub, Google, X } from "@/utils/icon";
 
-export const getServerSideProps = async ({ params, query }: any) => {
+export const getServerSideProps = async ({ params, query }) => {
   try {
     const { social, code } = query;
     if (social && code) {
-      let { token, ...rest }: any = await verifySocialAuth(social, code);
+      let { token, ...rest } = await verifySocialAuth(social, code);
       if (token) {
         return {
           props: {
@@ -29,24 +29,24 @@ export const getServerSideProps = async ({ params, query }: any) => {
         props: {},
       };
     }
-  } catch (error: any) {
+  } catch (error) {
     return {
       props: { error: error?.message || error },
     };
   }
 };
 
-export default function Login({ token, user, toast, error, children }: any) {
+export default function Login({ token, user, toast, error, children }) {
   let activeIndex = 0;
   const router = useRouter();
   const cookies = new Cookies();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [rowCount, setRowCount] = useState<any>(30);
+  const [rowCount, setRowCount] = useState(30);
   const [clientSide, setClientSide] = useState(false);
-  const [columnCount, setColumnCount] = useState<any>();
+  const [columnCount, setColumnCount] = useState();
 
-  const colorOptions: any = [
+  const colorOptions = [
     { color: "#0f0", gradient: "linear-gradient(#000, #0f0, #000)" },
     {
       color: "rgba(0,212,255,1)",
@@ -63,7 +63,7 @@ export default function Login({ token, user, toast, error, children }: any) {
     },
   ];
 
-  let colorIntervalFnc = (frezze: any) => {
+  let colorIntervalFnc = (frezze) => {
     if (!frezze) {
       activeIndex++;
       if (!colorOptions[activeIndex]) {
@@ -86,7 +86,7 @@ export default function Login({ token, user, toast, error, children }: any) {
     watch,
     control,
     formState: { errors, isValid, isDirty },
-  } = useForm<any>({
+  } = useForm({
     defaultValues: {
       userName: "Harsh Saini",
       email: "hs7222867@gmail.com",
@@ -94,7 +94,7 @@ export default function Login({ token, user, toast, error, children }: any) {
     },
   });
 
-  const onSubmit: SubmitHandler<any> = (data) => {
+  const onSubmit = (data) => {
     setLoading(true);
     try {
       if (isLogin) {
@@ -200,12 +200,12 @@ export default function Login({ token, user, toast, error, children }: any) {
   }
 }
 
-const GetSocialIcons = ({ toast }: any) => {
-  const socialButtonClicked = async (social: any) => {
+const GetSocialIcons = ({ toast }) => {
+  const socialButtonClicked = async (social) => {
     try {
-      const { url }: any = await getSocialurl(social);
+      const { url } = await getSocialurl(social);
       window.open(url, "_self");
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message);
     }
   };

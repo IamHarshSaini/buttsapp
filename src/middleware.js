@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 import { jwtDecode } from "jwt-decode";
 
 // This function can be marked `async` if using `await` inside
-export function middleware(request: NextRequest) {
+export function middleware(request) {
   try {
-    let token: any = request.cookies.get("butsapp");
+    let token = request.cookies.get("butsapp");
     if (token?.value) {
-      let { email }: any = jwtDecode(token?.value);
+      let { email } = jwtDecode(token?.value);
       if (!email) {
         return NextResponse.redirect(new URL("/auth", request.nextUrl));
       }else if(request.nextUrl.pathname == "/auth") {

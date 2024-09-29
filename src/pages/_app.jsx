@@ -1,7 +1,5 @@
-import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
-import type { AppProps } from "next/app";
 import { Work_Sans, Montserrat } from "next/font/google";
 import { initializeSocket, removeListners } from "@/socket";
 
@@ -16,6 +14,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { setIsUserLoggedIn, setUserDetails } from "@/redux/reducer";
 import { useRouter } from "next/router";
 import Loader from "@/components/loader";
+import { useEffect, useState } from "react";
 
 const work_sans = Work_Sans({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -23,7 +22,7 @@ const work_sans = Work_Sans({
   display: "swap",
 });
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({ Component, pageProps }) {
   const cookies = new Cookies(null, { path: "/" });
   const { getState, dispatch } = store;
   const {
@@ -31,7 +30,7 @@ export default function App({ Component, pageProps }: AppProps) {
   } = getState();
 
   const router = useRouter();
-  const [loading, setLoading] = useState<Boolean>(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const handleRouteChange = () => {
@@ -52,7 +51,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   useEffect(() => {
-    let { butsapp }: any = cookies.getAll();
+    let { butsapp } = cookies.getAll();
     if (butsapp && typeof butsapp == "string") {
       if (!isUserLoggedIn) {
         dispatch(setIsUserLoggedIn(true));
@@ -68,7 +67,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   if (loading) {
-    return <Loader />
+    return <Loader />;
   } else {
     return (
       <main className={work_sans.className}>

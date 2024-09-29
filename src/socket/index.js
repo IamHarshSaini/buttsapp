@@ -14,11 +14,11 @@ import {
 } from "@/redux/reducer";
 const { dispatch } = store;
 
-export let socket: any = null;
+export let socket = null;
 
 export const initializeSocket = () => {
   const cookies = new Cookies();
-  let { butsapp }: any = cookies.getAll();
+  let { butsapp } = cookies.getAll();
 
   if (socket) {
     return socket;
@@ -41,23 +41,23 @@ export const setupListeners = () => {
   function onConnect() {
     dispatch(setSocketConnected(true));
 
-    socket.emit("getAllUserList", (list: any) => {
+    socket.emit("getAllUserList", (list) => {
       dispatch(setAllUserList(list));
     });
 
-    socket.emit("chatList", (list: any) => {
+    socket.emit("chatList", (list) => {
       dispatch(setChatList(list));
     });
 
-    socket.on("message", (res: any) => {
+    socket.on("message", (res) => {
       dispatch(addNewMessages(res));
     });
 
-    // socket.on("updateMessage", (message: any) => {
+    // socket.on("updateMessage", (message) => {
     //   dispatch(updateChatMessage(message));
     // });
 
-    // socket.on("userStatusUpdate", (res: any) => {
+    // socket.on("userStatusUpdate", (res) => {
     //   dispatch(updateUserStatus(res));
     // });
 
@@ -77,7 +77,7 @@ export const setupListeners = () => {
   addToSocketListeners("disconnect", onDisconnect);
 };
 
-const addToSocketListeners = (name: any, fun?: any) => {
+const addToSocketListeners = (name, fun) => {
   if (!socket) return;
   if (Array.isArray(socket.listeners)) {
     socket.listeners = [...socket.listeners, { name, fun }];
@@ -88,7 +88,7 @@ const addToSocketListeners = (name: any, fun?: any) => {
 
 export const removeListners = () => {
   if (!socket) return;
-  socket?.listeners?.forEach((item: any) => {
+  socket?.listeners?.forEach((item) => {
     if (item.fnc) {
       socket.off(item.name, item.fnc);
     } else {
@@ -109,6 +109,6 @@ export const toggleConnection = () => {
 };
 
 // events custom
-export const markAsRead = (messageId: any, userId: any, senderId: any) => {
+export const markAsRead = (messageId, userId, senderId) => {
   // socket.emit("markAsRead", messageId, userId, senderId);
 };
