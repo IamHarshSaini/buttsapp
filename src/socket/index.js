@@ -5,13 +5,13 @@ import Cookies from "universal-cookie";
 // redux
 import {
   setChatList,
-  addNewMessages,
+  newMessages,
   setAllUserList,
-  // updateUserStatus,
-  // updateChatMessage,
+  userStatusUpdate,
   setSocketConnected,
-  // addNewChatMessageBySender,
+  updateChat,
 } from "@/redux/reducer";
+
 const { dispatch } = store;
 
 export let socket = null;
@@ -50,20 +50,20 @@ export const setupListeners = () => {
     });
 
     socket.on("message", (res) => {
-      dispatch(addNewMessages(res));
+      dispatch(newMessages(res));
+      dispatch(updateChat({ updatedChat: res?.updatedChat }));
     });
 
-    // socket.on("updateMessage", (message) => {
-    //   dispatch(updateChatMessage(message));
-    // });
+    socket.on("userStatusUpdate", (res) => {
+      dispatch(userStatusUpdate(res));
+    });
 
-    // socket.on("userStatusUpdate", (res) => {
-    //   dispatch(updateUserStatus(res));
-    // });
+    socket.on("updateChat", (res) => {
+      dispatch(updateChat(res));
+    });
 
-    // addToSocketListeners("message");
-    // addToSocketListeners("updateMessage");
-    // addToSocketListeners("userStatusUpdate");
+    addToSocketListeners("message");
+    addToSocketListeners("userStatusUpdate");
   }
 
   function onDisconnect() {
@@ -108,7 +108,7 @@ export const toggleConnection = () => {
   }
 };
 
-// events custom
+// custom events 
 export const markAsRead = (messageId, userId, senderId) => {
   // socket.emit("markAsRead", messageId, userId, senderId);
 };

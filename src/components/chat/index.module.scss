@@ -170,6 +170,8 @@ $contentWidth: 320px;
 
           .lastMessage {
             gap: 8px;
+            display: flex;
+            justify-content: space-between;
 
             .message {
               font-size: 14px;
@@ -186,9 +188,13 @@ $contentWidth: 320px;
             }
 
             .count {
+              display: flex;
+              justify-content: center;
+              align-items: center;
               color: #fff;
-              font-size: 14px;
-              padding: 3px 5px;
+              font-size: 12px;
+              height: 20px;
+              width: 20px;
               border-radius: 10px;
               background-color: var(--color-1);
             }

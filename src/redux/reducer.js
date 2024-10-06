@@ -1,5 +1,4 @@
-import { markAsRead } from "@/socket";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   chatList: [],
@@ -15,7 +14,7 @@ const rootSlice = createSlice({
   name: "root",
   initialState,
   reducers: {
-    setUserDetails: (state, action ) => {
+    setUserDetails: (state, action) => {
       state.userDetails = action.payload;
     },
     setSocketConnected: (state, action) => {
@@ -30,81 +29,67 @@ const rootSlice = createSlice({
     setChatList: (state, action) => {
       state.chatList = action.payload;
     },
-    // updateUserStatus: (
-    //   state,
-    //   action<{
-    //     status;
-    //     userId;
-    //     lastSeen;
-    //   }>
-    // ) => {
-    //   const { status, userId, lastSeen } = action.payload;
-    //   state.chatList = state.chatList.map((item) => {
-    //     if (item.chatMember?._id === userId) {
-    //       item.chatMember.isOnline = status;
-    //       item.chatMember.lastSeen = lastSeen;
-    //     }
-    //     return item;
-    //   });
-    //   if (
-    //     state?.selectedChat &&
-    //     state?.selectedChat?.chatMember?._id == userId
-    //   ) {
-    //     state.selectedChat = {
-    //       ...state.selectedChat,
-    //       chatMember: {
-    //         ...state.selectedChat["chatMember"],
-    //         isOnline: status,
-    //         lastSeen,
-    //       },
-    //     };
-    //   }
-    // },
     setChatMessages: (state, action) => {
       state.chatMessages = action.payload;
     },
-    addNewMessages: (state, action) => {
+    newMessages: (state, action) => {
       const { message, updatedChat } = action.payload;
       if (updatedChat?._id == state?.selectedChat?._id) {
         state.chatMessages.unshift(message);
-      } else {
       }
     },
-    // updateChat: (state, action) => {
-    //   state.chatList = [
-    //     action.payload,
-    //     ...state.chatList.filter(
-    //       (item) => item._id !== action.payload._id
-    //     ),
-    //   ];
-    // },
     setSelectedChat: (state, action) => {
       state.selectedChat = action.payload;
     },
-    // updateChatMessage: (state, action) => {
-    //   state.chatMessages = state.chatMessages.map((item) => {
-    //     if (item._id == action.payload._id) {
-    //       return action.payload;
-    //     } else {
-    //       return item;
-    //     }
-    //   });
-    // },
+    userStatusUpdate: (state, action) => {
+      let { chatList, selectedChat } = JSON.parse(JSON.stringify(state));
+      state.chatList = chatList = chatList.map((chat) => {
+        if (!chat?.isGroup) {
+          chat["members"][0]["isOnline"] = action["payload"]["status"];
+        }
+        return chat;
+      });
+      if (
+        selectedChat &&
+        !selectedChat["isGroup"] &&
+        selectedChat["members"][0]["_id"] == action["payload"]["userId"]
+      ) {
+        state.selectedChat["members"][0]["isOnline"] =
+          action["payload"]["status"];
+      }
+    },
+    updateChat: (state, action) => {
+      const {
+        payload: { updatedChat: updatedChatData },
+      } = action;
+      if (!updatedChatData["isGroup"]) {
+        const { chatList, userDetails } = JSON.parse(JSON.stringify(state));
+        state.chatList = chatList.map((chat) => {
+          if (chat["_id"] == updatedChatData["_id"]) {
+            updatedChatData["members"] = updatedChatData["members"].filter(
+              (member) => member["_id"] != userDetails["_id"]
+            );
+            return updatedChatData;
+          } else {
+            return chat;
+          }
+        });
+      }
+    },
   },
 });
 
 export const {
-  // updateChat,
+  updateChat,
   setChatList,
+  newMessages,
   setUserDetails,
   setAllUserList,
   setSelectedChat,
   setChatMessages,
-  // updateUserStatus,
+  userStatusUpdate,
   setIsUserLoggedIn,
-  // updateChatMessage,
   setSocketConnected,
-  addNewMessages,
 } = rootSlice.actions;
 
 export default rootSlice.reducer;

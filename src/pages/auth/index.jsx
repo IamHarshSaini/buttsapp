@@ -9,6 +9,7 @@ import { useForm, Controller } from "react-hook-form";
 import Cookies from "universal-cookie";
 import { getSocialurl, verifySocialAuth } from "@/api.service";
 import { GitHub, Google, X } from "@/utils/icon";
+import { useEffect, useState } from "react";
 
 export const getServerSideProps = async ({ params, query }) => {
   try {
